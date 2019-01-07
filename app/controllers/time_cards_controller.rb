@@ -1,5 +1,5 @@
 class TimeCardsController < ApplicationController
-  before_action :set_time_card, only: [:show, :edit, :update, :destroy]
+  # before_action :set_time_card, only: [:show, :edit, :update, :destroy]
 
   # GET /time_cards
   # GET /time_cards.json
@@ -10,6 +10,7 @@ class TimeCardsController < ApplicationController
   # GET /time_cards/1
   # GET /time_cards/1.json
   def show
+    
   end
 
   # GET /time_cards/new

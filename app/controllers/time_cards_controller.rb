@@ -10,7 +10,7 @@ class TimeCardsController < ApplicationController
   # GET /time_cards/1
   # GET /time_cards/1.json
   def show
-    
+    # @days = get_days(params[:year], params[:month])
   end
 
   # GET /time_cards/new

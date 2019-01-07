@@ -11,7 +11,7 @@ class SessionsController < ApplicationController
         log_in user
         params[:session][:remember_me] == '1' ? remember(user) : forget(user)
         # redirect_back_or user
-        redirect_to controller: :time_cards, action: :show, user_id: user.id, year_month: d.year 
+        redirect_to controller: :time_cards, action: :show, user_id: user.id, year: d.year, month: d.month 
     else
       flash.now[:danger] = 'Invalid email/password combination'
       render 'new'

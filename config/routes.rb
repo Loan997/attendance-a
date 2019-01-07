@@ -13,8 +13,8 @@ Rails.application.routes.draw do
       get :following, :followers
     end
   end
-  get '/time_cards/:user_id/:year_month' => 'time_cards#show'
-  get '/time_cards/:user_id/:year_month/edit' => 'time_cards#edit'
+  get '/time_cards/:user_id/:year/:month' => 'time_cards#show'
+  get '/time_cards/:user_id/:year/:month/edit' => 'time_cards#edit'
   resources :account_activations, only: [:edit]
   resources :password_resets,     only: [:new, :create, :edit, :update]
   resources :microposts,          only: [:create, :destroy]

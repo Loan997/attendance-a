@@ -1,20 +1,47 @@
 <% if logged_in? %>
   <div class="row">
-    <aside class="col-md-4">
-      <section class="user_info">
-
-      </section>
-      <section class="stats">
-
-      </section>
-      <section class="micropost_form">
-
-      </section>
-    </aside>
-    <div class="col-md-8">
-      <h3>Micropost Feed</h3>
-
-    </div>
+    <table class="table">
+	<thead>
+		<tr>
+			<th>順位</th>
+			<th>名前</th>
+			<th>惑星</th>
+			<th>勝点</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th>1</th>
+			<td>ブルーＳＣ</td>
+			<td>地球</td>
+			<td>101</td>
+		</tr>
+		<tr>
+			<th>2</th>
+			<td>ＦＣウェヌス</td>
+			<td>金星</td>
+			<td>83</td>
+		</tr>
+		<tr>
+			<th>3</th>
+			<td>ジュピターＦＣ</td>
+			<td>木星</td>
+			<td>68</td>
+		</tr>
+		<tr>
+			<th>4</th>
+			<td>ＳＣマーキュリー</td>
+			<td>水星</td>
+			<td>67</td>
+		</tr>
+		<tr>
+			<th>5</th>
+			<td>ＦＣマルス</td>
+			<td>火星</td>
+			<td>65</td>
+		</tr>
+	</tbody>
+</table>
   </div>
 <% else %>
   <%= render 'static_pages/user_not_logged_in' %>

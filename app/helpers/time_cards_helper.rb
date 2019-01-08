@@ -14,11 +14,69 @@ module TimeCardsHelper
     return week
   end
   
+  #今日の日付か
   def is_today?(year, month, day)
     return Date.parse("#{year}/#{month}/#{day}") == Date.today
   end
   
-  def not_attendance?(user, year, month, day)
-    return !TimeCard.find_by(user_id:user, date:Date.strptime("#{year}-#{month}-#{day}", '%Y-%m-%d'))
+  #年月日をdate型用フォーマットに変更
+  def parse_date_type(year, month, day)
+      date_type = Date.parse("#{year}/#{month}/#{day}")
+      return date_type
+  end
+  
+  #出社しているか
+  def attendance?(user, year, month, day)
+    time_card = TimeCard.find_by(user_id:user, date:Date.strptime("#{year}-#{month}-#{day}", '%Y-%m-%d'))
+    return time_card && time_card.in_at
+  end
+  
+  def leaving?(user, year, month, day)
+    time_card = TimeCard.find_by(user_id:user, date:Date.strptime("#{year}-#{month}-#{day}", '%Y-%m-%d'))
+    return time_card && time_card.out_at
+  end
+  
+  #出社の時を取得
+  def get_hour_in_at(user_id, year, month, day)
+    time_card = TimeCard.find_by(user_id:user_id, date:Date.strptime("#{year}-#{month}-#{day}", '%Y-%m-%d'))
+    if(time_card == nil) then
+      return ''
+    else
+      return time_card.in_at.strftime("%H")
+    end
+  end
+  
+  #出社の分を取得
+  def get_minute_in_at(user_id, year, month, day)
+    time_card = TimeCard.find_by(user_id:user_id, date:Date.strptime("#{year}-#{month}-#{day}", '%Y-%m-%d'))
+    if(time_card == nil) then
+      return ''
+    else
+      return time_card.in_at.strftime("%M")
+    end
+  end
+  
+  #退社の時を取得
+  def get_hour_out_at(user_id, year, month, day)
+    time_card = TimeCard.find_by(user_id:user_id, date:Date.strptime("#{year}-#{month}-#{day}", '%Y-%m-%d'))
+    if(time_card == nil || time_card.out_at == nil) then
+      return ''
+    else
+      return time_card.out_at.strftime("%H")
+    end
+  end
+  
+  #退社の分を取得
+  def get_minute_out_at(user_id, year, month, day)
+    time_card = TimeCard.find_by(user_id:user_id, date:Date.strptime("#{year}-#{month}-#{day}", '%Y-%m-%d'))
+    if(time_card == nil || time_card.out_at == nil) then
+      return ''
+    else
+      return time_card.out_at.strftime("%M")
+    end
+  end
+  
+  def attended_time()
+    
   end
 end

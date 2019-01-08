@@ -6,5 +6,6 @@ class CreateTimeCards < ActiveRecord::Migration[5.1]
       t.date :date
       t.references :user, foreign_key: true
     end
+    add_index  :keywords, [:date, :user], unique: true
   end
 end

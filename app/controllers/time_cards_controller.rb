@@ -1,21 +1,21 @@
 class TimeCardsController < ApplicationController
+  
+  require 'date'
+  
   # before_action :set_time_card, only: [:show, :edit, :update, :destroy]
 
-  # GET /time_cards
-  # GET /time_cards.json
   def index
-    @time_cards = TimeCard.all
   end
 
   # GET /time_cards/1
   # GET /time_cards/1.json
   def show
     # @days = get_days(params[:year], params[:month])
+    user_id = params[:user_id]
+    @user = User.find(user_id)
   end
 
-  # GET /time_cards/new
   def new
-    @time_card = TimeCard.new
   end
 
   # GET /time_cards/1/edit
@@ -25,16 +25,24 @@ class TimeCardsController < ApplicationController
   # POST /time_cards
   # POST /time_cards.json
   def create
-    @time_card = TimeCard.new(time_card_params)
+    if params[:button_type] == 'attendance' then
+      time_card = TimeCard.new(
+        in_at: Time.now,
+        out_at: '',
+        date: Date.today,
+        user_id: params[:user_id]
+        )
+    else
+      time_card = TimeCard.find_by(user_id: params[:user_id], date: params[:date_type])
+      time_card.out_at = Time.now
+    end
 
-    respond_to do |format|
-      if @time_card.save
-        format.html { redirect_to @time_card, notice: 'Time card was successfully created.' }
-        format.json { render :show, status: :created, location: @time_card }
-      else
-        format.html { render :new }
-        format.json { render json: @time_card.errors, status: :unprocessable_entity }
-      end
+    if time_card.save
+      flash[:info] = "出社/退社処理が完了しました。"
+      redirect_to action: 'show', user_id: params[:user_id], year: Date.today.year, month: Date.today.month
+    else
+      flash[:info] = "出社/退社処理が失敗しました。"
+      redirect_to root_url
     end
   end
 
@@ -70,6 +78,6 @@ class TimeCardsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def time_card_params
-      params.require(:time_card).permit(:in_at, :out_at, :date)
+      params.require(:time_card).permit(:in_at, :out_at, :date, :user_id)
     end
 end

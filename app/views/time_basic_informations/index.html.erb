@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Time Basic Informations</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Designated working times</th>
+      <th>Basic time</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @time_basic_informations.each do |time_basic_information| %>
+      <tr>
+        <td><%= time_basic_information.designated_working_times %></td>
+        <td><%= time_basic_information.basic_time %></td>
+        <td><%= link_to 'Show', time_basic_information %></td>
+        <td><%= link_to 'Edit', edit_time_basic_information_path(time_basic_information) %></td>
+        <td><%= link_to 'Destroy', time_basic_information, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Time Basic Information', new_time_basic_information_path %>

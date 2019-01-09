@@ -2,9 +2,13 @@
     <table class="table table-bordered">
 	    <tbody>
 		    <tr>
-			    <td>←→</td>
-			    <td>指定勤務時間</td>
-			    <td colspan="3">基本時間</td>
+			    <td>
+			    	<%= link_to "<", {:action => "show", :user_id => params[:user_id], :year => @pre_year, :month => @pre_month},class: "btn btn-primary" %>
+			    	<%= params[:year] %>年<%= params[:month] %>月&nbsp;&nbsp;時間管理表
+			    	<%= link_to ">" , {:action => "show", :user_id => params[:user_id], :year => @next_year, :month => @next_month},class: "btn btn-primary"%>
+			    </td>
+			    <td>指定勤務時間&nbsp;&nbsp;<%= @designated_time %></td>
+			    <td colspan="3">基本時間&nbsp;&nbsp;<%= @basic_time %></td>
 			    <td>初日&nbsp;&nbsp;<%= params[:month] %>/1</td>
 		    </tr>
 		    <tr>
@@ -12,7 +16,7 @@
 			    <td>氏名&nbsp;&nbsp;<%= @user.name %></td>
 			    <td>コード</td>
 			    <td></td>
-			    <td>出勤日数&nbsp;&nbsp;<%= get_days(params[:year], params[:month]) %>日</td>
+			    <td>出勤日数&nbsp;&nbsp;<%= @counts %>日</td>
 			    <td>締め&nbsp;&nbsp;<%= params[:month] %>/<%= get_days(params[:year], params[:month]) %></td>
 		    </tr>
 	    </tbody>
@@ -47,13 +51,13 @@
 			    <td><%= get_hour_in_at(params[:user_id], params[:year], params[:month], day) %></td>
 			    <td><%= get_minute_in_at(params[:user_id], params[:year], params[:month], day) %></td>
 			    <td>
-			      <% if is_today?(params[:year], params[:month], day) && !attendance?(params[:user_id], params[:year], params[:month], day) %>
-			        <%= form_with url: time_cards_path do |form| %>
-			          <%= hidden_field_tag 'user_id', params[:user_id] %>
-			          <%= hidden_field_tag 'button_type', 'attendance' %>
-                <%= form.submit "出社", class: "btn btn-default" %>
-               <% end %>
-            <% end %>
+			    <% if is_today?(params[:year], params[:month], day) && !attendance?(params[:user_id], params[:year], params[:month], day) %>
+			    	<%= form_with url: time_cards_path do |form| %>
+			        <%= hidden_field_tag 'user_id', params[:user_id] %>
+			        <%= hidden_field_tag 'button_type', 'attendance' %>
+                	<%= form.submit "出社", class: "btn btn-default" %>
+               		<% end %>
+				<% end %>
 			    </td>
 			    <td><%= get_hour_out_at(params[:user_id], params[:year], params[:month], day) %></td>
 			    <td><%= get_minute_out_at(params[:user_id], params[:year], params[:month], day) %></td>
@@ -61,21 +65,23 @@
 			    	<% if is_today?(params[:year], params[:month], day) && 
 			    			attendance?(params[:user_id], params[:year], params[:month], day) &&
 			    					!leaving?(params[:user_id], params[:year], params[:month], day) %>
-			        <%= form_with url: time_cards_path do |form| %>
-			          <%= hidden_field_tag 'user_id', params[:user_id] %>
-			          <%= hidden_field_tag 'date_type', parse_date_type(params[:year], params[:month], day) %>
-                <%= form.submit "退社", class: "btn btn-default" %>
-              <% end %>
-            <% end %>
-          </td>
-			    <td>td</td>
-			    <td></td>
+			        	<%= form_with url: time_cards_path do |form| %>
+			          	<%= hidden_field_tag 'user_id', params[:user_id] %>
+			          	<%= hidden_field_tag 'date_type', parse_date_type(params[:year], params[:month], day) %>
+                		<%= form.submit "退社", class: "btn btn-default" %>
+              			<% end %>
+            		<% end %>
+          		</td>
+			    <td><%= get_stay_time(params[:user_id], params[:year], params[:month], day) %></td>
+			    <td>
+			    	<%= %>
+			    </td>
 		    </tr>
 		    <% end %>
 		    <tr>
-			    <td colspan="2"></td>
+			    <td colspan="2"><%= @total_work_time %></td>
 			    <td colspan="6"></td>
-			    <td></td>
+			    <td><%= @sum_time %></td>
 			    <td></td>
 		    </tr>
 	    </tbody>

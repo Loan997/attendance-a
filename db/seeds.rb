@@ -14,3 +14,8 @@ User.create!(name:  "User",
              password_confirmation: "foobar",
              admin:     false,
              )
+             
+TimeBasicInformation.create!(
+    designated_working_times: "8:00",
+    basic_time: "7:50"
+    )

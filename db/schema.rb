@@ -10,7 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190108084429) do
+ActiveRecord::Schema.define(version: 20190109043110) do
+
+  create_table "time_basic_informations", force: :cascade do |t|
+    t.time "designated_working_times"
+    t.time "basic_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "time_cards", force: :cascade do |t|
     t.time "in_at"
@@ -29,6 +36,7 @@ ActiveRecord::Schema.define(version: 20190108084429) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "affiliation"
+    t.string "remarks"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

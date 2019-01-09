@@ -76,7 +76,33 @@ module TimeCardsHelper
     end
   end
   
-  def attended_time()
-    
+  #在社時間を取得
+  def get_stay_time(user, year, month, day)
+    time_card = TimeCard.find_by(user_id:user, date:Date.strptime("#{year}-#{month}-#{day}", '%Y-%m-%d'))
+    if(time_card && time_card.out_at) then
+      return ((time_card.out_at - time_card.in_at) / 60 / 60).round(2)
+    else
+      return nil
+    end
+  end
+  
+  #出社時間を取得
+  def get_time_card(time_cards, day)
+    time_card = time_cards.where(date: Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d')).first
+    if time_card then
+      time_card = time_card.in_at
+    else
+      time_card = ''
+    end
+    return time_card
+  end
+  
+  def get_remarks(day)
+    time_card = TimeCard.find_by(user_id:user, date:Date.strptime("#{year}-#{month}-#{day}", '%Y-%m-%d'))
+    if time_card then
+      return time_card.remarks
+    else
+      return nil
+    end
   end
 end

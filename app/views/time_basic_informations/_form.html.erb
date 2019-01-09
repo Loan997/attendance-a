@@ -1,0 +1,27 @@
+<%= form_with(model: time_basic_information, local: true) do |form| %>
+  <% if time_basic_information.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(time_basic_information.errors.count, "error") %> prohibited this time_basic_information from being saved:</h2>
+
+      <ul>
+      <% time_basic_information.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :designated_working_times %>
+    <%= form.time_select :designated_working_times, id: :time_basic_information_designated_working_times %>
+  </div>
+
+  <div class="field">
+    <%= form.label :basic_time %>
+    <%= form.time_select :basic_time, id: :time_basic_information_basic_time %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

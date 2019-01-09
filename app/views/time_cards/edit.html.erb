@@ -1,6 +1,30 @@
 <h1>Editing Time Card</h1>
-
-<%= render 'form', time_card: @time_card %>
-
-<%= link_to 'Show', @time_card %> |
-<%= link_to 'Back', time_cards_path %>
+<%= form_with url: users_path do |form| %>
+    <table class="table table-bordered table-striped">
+	    <thead>
+	      <tr>
+			    <th>日付</th>
+			    <th>曜日</th>
+			    <th>出社</th>
+			    <th>退社</th>
+			    <th>在社時間</th>
+			    <th>備考</th>
+		    </tr>
+	    </thead>
+	    <tbody>
+	    	<% (1..get_days(params[:year], params[:month])).each do |day| %>
+		    <tr>
+			  	<td><%= params[:month] %>/<%= day %></td>
+			    <td><%= get_weekday(params[:year], params[:month], day) %></td>
+			    <td><%= form.time_field :in_at %></td>
+			    <td><%= form.time_field :out_at %></td>
+			    <td><%= get_stay_time(params[:user_id], params[:year], params[:month], day) %></td>
+			    <td><%= form.text_field :remarks %></td>
+         </tr>
+		    <% end %>
+	    </tbody>
+    </table>
+<%= form.submit '編集を保存する', class: "btn btn-primary"%>
+<%= link_to "キャンセル", {:action => "show", :user_id => params[:user_id], :year => params[:year], :month => params[:month]},class: "btn btn-primary"%>
+<% end %>
+get_time_card(@time_cards, day)

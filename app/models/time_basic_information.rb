@@ -1,2 +1,3 @@
 class TimeBasicInformation < ApplicationRecord
+  
 end

@@ -40,14 +40,12 @@ class TimeBasicInformationsController < ApplicationController
   # PATCH/PUT /time_basic_informations/1
   # PATCH/PUT /time_basic_informations/1.json
   def update
-    respond_to do |format|
-      if @time_basic_information.update(time_basic_information_params)
-        format.html { redirect_to @time_basic_information, notice: 'Time basic information was successfully updated.' }
-        format.json { render :show, status: :ok, location: @time_basic_information }
-      else
-        format.html { render :edit }
-        format.json { render json: @time_basic_information.errors, status: :unprocessable_entity }
-      end
+    if @time_basic_information.update(time_basic_information_params)
+      flash[:success] = "基本情報が更新されました。"
+      redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
+    else
+      flash[:danger] = "基本情報の更新が失敗しました。"
+      redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
     end
   end
 

@@ -21,9 +21,9 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      @user.send_activation_email
-      flash[:info] = "Please check your email to activate your account."
-      redirect_to root_url
+      log_in @user
+      flash[:success] = "アカウント作成が完了しました。"
+      redirect_to controller: 'time_cards', action: 'show', user_id: @user.id, year: Date.current.year, month: Date.current.month
     else
       render 'new'
     end
@@ -34,16 +34,18 @@ class UsersController < ApplicationController
 
   def update
     if @user.update_attributes(user_params)
-      flash[:success] = "Profile updated"
-      redirect_to @user
+      # byebug
+      flash[:success] = "アカウント情報が更新されました。"
+      redirect_to controller: 'time_cards', action: 'show', user_id: @user.id, year: Date.current.year, month: Date.current.month
     else
-      render 'edit'
+      flash[:danger] = "アカウント情報の更新に失敗しました。"
+      redirect_to controller: 'time_cards', action: 'show', user_id: @user.id, year: Date.current.year, month: Date.current.month
     end
   end
   
   def destroy
     User.find(params[:id]).destroy
-    flash[:success] = "User deleted"
+    flash[:success] = "該当ユーザーが削除されました。"
     redirect_to users_url
   end
   
@@ -64,7 +66,7 @@ class UsersController < ApplicationController
   private
 
     def user_params
-      params.require(:user).permit(:name, :email, :password,
+      params.require(:user).permit(:name, :email, :affiliation, :password,
                                    :password_confirmation)
     end
     

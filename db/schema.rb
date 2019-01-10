@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190109043110) do
+ActiveRecord::Schema.define(version: 20190109051905) do
 
   create_table "time_basic_informations", force: :cascade do |t|
     t.time "designated_working_times"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20190109043110) do
     t.time "out_at"
     t.date "date"
     t.integer "user_id"
+    t.string "remarks"
     t.index ["user_id"], name: "index_time_cards_on_user_id"
   end
 

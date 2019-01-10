@@ -17,7 +17,7 @@
 			    <td>コード</td>
 			    <td></td>
 			    <td>出勤日数&nbsp;&nbsp;<%= @counts %>日</td>
-			    <td>締め&nbsp;&nbsp;<%= params[:month] %>/<%= get_days(params[:year], params[:month]) %></td>
+			    <td>締め&nbsp;&nbsp;<%= params[:month] %>/<%= get_days %></td>
 		    </tr>
 	    </tbody>
     </table>
@@ -44,7 +44,7 @@
 		    </tr>
 	    </thead>
 	    <tbody>
-	    	<% (1..get_days(params[:year], params[:month])).each do |day| %>
+	    	<% (1..get_days).each do |day| %>
 		    <tr>
 			  	<td><%= params[:month] %>/<%= day %></td>
 			    <td><%= get_weekday(params[:year], params[:month], day) %></td>
@@ -74,14 +74,14 @@
           		</td>
 			    <td><%= get_stay_time(params[:user_id], params[:year], params[:month], day) %></td>
 			    <td>
-			    	<%= %>
+			    	<%= get_remarks(day) %>
 			    </td>
 		    </tr>
 		    <% end %>
 		    <tr>
 			    <td colspan="2"><%= @total_work_time %></td>
 			    <td colspan="6"></td>
-			    <td><%= @sum_time %></td>
+			    <td><%= @sum_stay_time %></td>
 			    <td></td>
 		    </tr>
 	    </tbody>

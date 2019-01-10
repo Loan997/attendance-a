@@ -1,11 +1,15 @@
 <% provide(:title, 'All users') %>
-<h1>All users</h1>
+<h1>ユーザー一覧</h1>
 
 <%= will_paginate %>
 
 <ul class="users">
   <% @users.each do |user| %>
-    <%= render @users %>
+    <li>
+      <%= link_to user.name, :controller => "time_cards", :action => "show", :user_id => user.id, :year => Date.today.year, :month => Date.today.month %> 
+      | 
+      <%= link_to "削除", user, method: :delete, data: { confirm: "本当に削除しますか。" } %>
+    </li>
   <% end %>
 </ul>
 

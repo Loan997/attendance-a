@@ -13,15 +13,15 @@
 
   <div class="field">
     <%= form.label :designated_working_times %>
-    <%= form.time_select :designated_working_times, id: :time_basic_information_designated_working_times %>
+    <%= form.time_field :designated_working_times, id: :time_basic_information_designated_working_times %>
   </div>
 
   <div class="field">
     <%= form.label :basic_time %>
-    <%= form.time_select :basic_time, id: :time_basic_information_basic_time %>
+    <%= form.time_field :basic_time, id: :time_basic_information_basic_time %>
   </div>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= form.submit "編集", class: "btn btn-primary"%>
   </div>
 <% end %>

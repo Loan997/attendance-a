@@ -153,4 +153,9 @@ module TimeCardsHelper
     end
   end
   
+  def after_today?(day)
+    # byebug
+    return "#{params[:year]}-#{params[:month]}-#{day}".to_datetime > Date.today
+  end
+  
 end

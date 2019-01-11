@@ -16,10 +16,11 @@
 			<tr>
 				<td><%= params[:month] %>/<%= day %></td>
 			    <td><%= get_weekday(params[:year], params[:month], day) %></td>
-			    <td><%= time_field(day, "in_at", value: get_in_at(day)) %></td>
-			    <td><%= time_field(day, "out_at", value: get_out_at(day)) %></td>
-			    <td><%= get_stay_time(params[:user_id], params[:year], params[:month], day) %></td>
-			    <td><%= text_field(day, "remarks", value: get_remarks(day)) %></td>
+			    <% if after_today?(day) then %>
+			    	<%= render :partial => "after_today", :locals => { :day => day } %>
+			    <% else %>
+			    	<%= render :partial => "not_after_today", :locals => { :day => day } %>
+			    <% end %>
         	 </tr>
 		    <% end %>
 	    </tbody>

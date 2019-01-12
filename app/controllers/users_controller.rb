@@ -38,8 +38,8 @@ class UsersController < ApplicationController
       flash[:success] = "アカウント情報が更新されました。"
       redirect_to controller: 'time_cards', action: 'show', user_id: @user.id, year: Date.current.year, month: Date.current.month
     else
-      flash[:danger] = "アカウント情報の更新に失敗しました。"
-      redirect_to controller: 'time_cards', action: 'show', user_id: @user.id, year: Date.current.year, month: Date.current.month
+      # redirect_to controller: 'time_cards', action: 'show', user_id: @user.id, year: Date.current.year, month: Date.current.month
+      render 'edit'
     end
   end
   

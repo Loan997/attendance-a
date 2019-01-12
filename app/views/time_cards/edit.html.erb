@@ -1,5 +1,7 @@
+<% if params[:user_id] then %>
 
 <%= form_tag("/time_cards/#{params[:user_id]}", method: "patch" ) do %>
+
     <table class="table table-bordered table-striped">
 	    <thead>
 	    	<tr>
@@ -30,4 +32,43 @@
 <%= hidden_field_tag 'month', params[:month] %>
 <%= submit_tag('編集を保存する', class: "btn btn-primary") %>
 <%= link_to "キャンセル", {:action => "show", :user_id => params[:user_id], :year => params[:year], :month => params[:month]},class: "btn btn-primary"%>
+<% end %>
+<% end %>
+
+<% if params[:user_id] == nil then %>
+
+<%= form_tag("/time_cards/#{params[:id]}", method: "patch" ) do %>
+
+
+    <table class="table table-bordered table-striped">
+	    <thead>
+	    	<tr>
+				<th>日付</th>
+				<th>曜日</th>
+				<th>出社</th>
+				<th>退社</th>
+				<th>在社時間</th>
+				<th>備考</th>
+		  </tr>
+	    </thead>
+	    <tbody>
+	    	<% (1..get_days).each do |day| %>
+			<tr>
+				<td><%= params[:month] %>/<%= day %></td>
+			    <td><%= get_weekday(params[:year], params[:month], day) %></td>
+			    <% if after_today?(day) then %>
+			    	<%= render :partial => "after_today", :locals => { :day => day } %>
+			    <% else %>
+			    	<%= render :partial => "not_after_today", :locals => { :day => day } %>
+			    <% end %>
+        	 </tr>
+		    <% end %>
+	    </tbody>
+    </table>
+<%= hidden_field_tag 'days', get_days %>
+<%= hidden_field_tag 'year', params[:year] %>
+<%= hidden_field_tag 'month', params[:month] %>
+<%= submit_tag('編集を保存する', class: "btn btn-primary") %>
+<%= link_to "キャンセル", {:action => "show", :user_id => params[:id], :year => params[:year], :month => params[:month]},class: "btn btn-primary"%>
+<% end %>
 <% end %>

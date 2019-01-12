@@ -125,7 +125,11 @@ module TimeCardsHelper
   
   #出社時間を取得
   def get_in_at(day)
-    time_card = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+    if params[:user_id] then
+      time_card = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+    else
+      time_card = TimeCard.find_by(user_id:params[:id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+    end
     if time_card && time_card.in_at then
       return time_card.in_at.strftime('%H:%M')
     else

@@ -107,10 +107,10 @@ class TimeCardsController < ApplicationController
       #登録済みのレコードなら更新
       if time_card then
         time_card.in_at = "#{params[:"#{day}"][:in_at]}"
+        # byebug
         time_card.out_at = params["#{day}"][:out_at]
         # byebug
         time_card.remarks = params["#{day}"][:remarks]
-        
       #登録されていないなら新規登録
       else
         time_card = TimeCard.new(
@@ -121,7 +121,11 @@ class TimeCardsController < ApplicationController
         user_id: params[:id]
         )
       end
-      time_card.save
+      # byebug
+      if !time_card.save then
+        render 'edit'
+        return
+      end
     end
     flash[:success] = "勤怠編集処理が完了しました。"
     redirect_to action: 'show', user_id: params[:id], year: params[:year], month: params[:month]
@@ -141,3 +145,4 @@ class TimeCardsController < ApplicationController
       params.require(:time_card).permit(:in_at, :out_at, :date, :user_id)
     end
 end
+

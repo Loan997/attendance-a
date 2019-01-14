@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy,
                                         :following, :followers]
   before_action :correct_user,   only: [:edit, :update]
-  before_action :admin_user,     only: :destroy
+  before_action :admin_user,     only: [:destroy, :index]
 
   def index
     @users = User.paginate(page: params[:page])
@@ -74,12 +74,8 @@ class UsersController < ApplicationController
 
     # 正しいユーザーかどうかを確認
     def correct_user
-      @user = User.find(params[:id])
+      @user = User.find(params[:user_id])
       redirect_to(root_url) unless current_user?(@user)
     end
 
-    # 管理者かどうかを確認
-    def admin_user
-      redirect_to(root_url) unless current_user.admin?
-    end
 end

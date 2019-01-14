@@ -1,7 +1,6 @@
 <% if params[:user_id] then %>
 
 <%= form_tag("/time_cards/#{params[:user_id]}", method: "patch" ) do %>
-
     <table class="table table-bordered table-striped">
 	    <thead>
 	    	<tr>
@@ -14,15 +13,22 @@
 		  </tr>
 	    </thead>
 	    <tbody>
-	    	<% (1..get_days).each do |day| %>
+	    	<% @time_cards.each.with_index(1) do |time_card, i| %>
 			<tr>
-				<td><%= params[:month] %>/<%= day %></td>
-			    <td><%= get_weekday(params[:year], params[:month], day) %></td>
-			    <% if after_today?(day) then %>
-			    	<%= render :partial => "after_today", :locals => { :day => day } %>
-			    <% else %>
-			    	<%= render :partial => "not_after_today", :locals => { :day => day } %>
-			    <% end %>
+				<td><%= params[:month] %>/<%= i %></td>
+			    <td><%= get_weekday(params[:year], params[:month], i) %></td>
+			    
+			    
+			    
+			    <%= fields_for "time_cards[]", time_card do |f| %>
+			    
+					<td><%= f.time_field :in_at %></td>
+					<td><%= f.time_field :out_at %></td>
+					<td><%= get_stay_time(params[:user_id], params[:year], params[:month], i) %></td>
+					<td><%= f.text_field :remarks %></td>
+				<% end %>
+			    
+			    
         	 </tr>
 		    <% end %>
 	    </tbody>
@@ -35,11 +41,11 @@
 <% end %>
 <% end %>
 
+
+
 <% if params[:user_id] == nil then %>
 
 <%= form_tag("/time_cards/#{params[:id]}", method: "patch" ) do %>
-
-
     <table class="table table-bordered table-striped">
 	    <thead>
 	    	<tr>
@@ -52,15 +58,20 @@
 		  </tr>
 	    </thead>
 	    <tbody>
-	    	<% (1..get_days).each do |day| %>
+	    	<% @time_cards.each.with_index(1) do |time_card, i| %>
 			<tr>
-				<td><%= params[:month] %>/<%= day %></td>
-			    <td><%= get_weekday(params[:year], params[:month], day) %></td>
-			    <% if after_today?(day) then %>
-			    	<%= render :partial => "after_today", :locals => { :day => day } %>
-			    <% else %>
-			    	<%= render :partial => "not_after_today", :locals => { :day => day } %>
-			    <% end %>
+				<td><%= params[:month] %>/<%= i %></td>
+			    <td><%= get_weekday(params[:year], params[:month], i) %></td>
+			    <%= fields_for "time_cards[]", time_card do |f| %>
+			    <%= f.error_messages %>
+					<td><%= f.time_field :in_at, :style => "%H:%M",
+      value: "%H:%M",
+      min: 'hh:mm:ss',
+      max: 'hh:mm:ss' %></td>
+					<td><%= f.time_field :out_at %></td>
+					<td><%= get_stay_time(params[:id], params[:year], params[:month], i) %></td>
+					<td><%= f.text_field :remarks %></td>
+				<% end %>
         	 </tr>
 		    <% end %>
 	    </tbody>
@@ -72,3 +83,6 @@
 <%= link_to "キャンセル", {:action => "show", :user_id => params[:id], :year => params[:year], :month => params[:month]},class: "btn btn-primary"%>
 <% end %>
 <% end %>
+
+
+

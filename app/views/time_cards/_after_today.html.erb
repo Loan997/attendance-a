@@ -1,4 +1,4 @@
-<td><%= time_field(day, "in_at", readonly:true, value: get_in_at(day)) %></td>
-<td><%= time_field(day, "out_at", readonly:true, value: get_out_at(day)) %></td>
-<td><%= get_stay_time(params[:user_id], params[:year], params[:month], day) %></td>
-<td><%= text_field(day, "remarks", readonly:true, value: get_remarks(day)) %></td>
+<td><%= f.time_field(day, "in_at", readonly:true, value: get_in_at(day)) %></td>
+<td><%= f.time_field(day, "out_at", readonly:true, value: get_out_at(day)) %></td>
+<td><%= f.get_stay_time(params[:user_id], params[:year], params[:month], day) %></td>
+<td><%= f.text_field(day, "remarks", readonly:true, value: get_remarks(day)) %></td>

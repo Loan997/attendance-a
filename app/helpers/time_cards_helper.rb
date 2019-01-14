@@ -59,6 +59,7 @@ module TimeCardsHelper
   
   #出社の時を取得
   def get_hour_in_at(user_id, year, month, day)
+    # byebug
     time_card = TimeCard.find_by(user_id:user_id, date:Date.strptime("#{year}-#{month}-#{day}", '%Y-%m-%d'))
     if(time_card == nil || time_card.in_at == nil) then
       return ''
@@ -99,10 +100,11 @@ module TimeCardsHelper
   
   #在社時間を取得
   def get_stay_time(user, year, month, day)
+    # byebug
     time_card = TimeCard.find_by(user_id:user, date:Date.strptime("#{year}-#{month}-#{day}", '%Y-%m-%d'))
     if(time_card && time_card.out_at && time_card.in_at) then
       # byebug
-      if time_card.in_at < "09:00"
+      if time_card.in_at > time_card.out_at then
         return ((time_card.out_at - time_card.in_at) / 60 / 60).floor(2) + 24
       else
         return ((time_card.out_at - time_card.in_at) / 60 / 60).floor(2)
@@ -160,6 +162,15 @@ module TimeCardsHelper
   def after_today?(day)
     # byebug
     return "#{params[:year]}-#{params[:month]}-#{day}".to_datetime > Date.today
+  end
+  
+  def get_time_cards
+    today = Date.current
+    # byebug 
+    # test = 1
+    @time_cards = TimeCard.where(user_id: params[:id]).where(date: today.in_time_zone.all_month).order("date")
+    # byebug
+    return @time_cards
   end
   
 end

@@ -1,5 +1,8 @@
 class TimeBasicInformationsController < ApplicationController
   before_action :set_time_basic_information, only: [:show, :edit, :update, :destroy]
+  before_action :logged_in_user, only: [:edit, :update]
+  before_action :admin_user, only: [:edit, :update]
+  
 
   # GET /time_basic_informations
   # GET /time_basic_informations.json

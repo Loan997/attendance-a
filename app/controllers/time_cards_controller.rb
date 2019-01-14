@@ -4,6 +4,8 @@ class TimeCardsController < ApplicationController
   require 'mathn'
   
   # before_action :set_time_card, only: [:show, :edit, :update, :destroy]
+  before_action :admin_user_or_correct_user,     only: [:show, :edit]
+  
 
   def index
   end
@@ -46,12 +48,12 @@ class TimeCardsController < ApplicationController
     # byebug
     for time_card in time_cards
       stay_time = ((time_card.out_at - time_card.in_at) / 60 / 60).floor(2)
-      if time_card.in_at < "09:00" then
+      if time_card.in_at > time_card.out_at then
         stay_time += 24
       end
       @sum_stay_time += stay_time
     end
-    @sum_stay_time = @sum_stay_time.round(2)
+    # @sum_stay_time = @sum_stay_time.floor(2)
   end
 
   def new
@@ -60,7 +62,11 @@ class TimeCardsController < ApplicationController
   # GET /time_cards/1/edit
   def edit
     today = Date.current
-    @time_cards = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month)
+    
+    (1..view_context.get_days).each do |day|
+      TimeCard.find_or_create_by(user_id: params[:user_id], date: "#{params[:year]}-#{params[:month]}-#{day}")
+    end
+    @time_cards = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).order("date")
   end
 
   # POST /time_cards
@@ -99,32 +105,43 @@ class TimeCardsController < ApplicationController
 
   # PATCH/PUT /time_cards/1
   # PATCH/PUT /time_cards/1.json
+  # def update
+  #   days = params[:days].to_i
+  #   for day in 1..days do
+  #     time_card = TimeCard.find_by(user_id:params[:id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+  #     # byebug
+  #     #登録済みのレコードなら更新
+  #     if time_card then
+  #       time_card.in_at = "#{params[:"#{day}"][:in_at]}"
+  #       # byebug
+  #       time_card.out_at = params["#{day}"][:out_at]
+  #       # byebug
+  #       time_card.remarks = params["#{day}"][:remarks]
+  #     #登録されていないなら新規登録
+  #     else
+  #       time_card = TimeCard.new(
+  #       in_at: "#{params[:"#{day}"][:in_at]}",
+  #       out_at: params["#{day}"][:out_at],
+  #       date: Date.strptime("#{params[:year]}-#{params[:month]}-#{day}"),
+  #       remarks: params["#{day}"][:remarks],
+  #       user_id: params[:id]
+  #       )
+  #     end
+  #     # byebug
+  #     if !time_card.save then
+  #       render 'edit'
+  #       return
+  #     end
+  #   end
+  #   flash[:success] = "勤怠編集処理が完了しました。"
+  #   redirect_to action: 'show', user_id: params[:id], year: params[:year], month: params[:month]
+  # end
+  
   def update
-    days = params[:days].to_i
-    for day in 1..days do
-      time_card = TimeCard.find_by(user_id:params[:id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
-      # byebug
-      #登録済みのレコードなら更新
-      if time_card then
-        time_card.in_at = "#{params[:"#{day}"][:in_at]}"
-        # byebug
-        time_card.out_at = params["#{day}"][:out_at]
-        # byebug
-        time_card.remarks = params["#{day}"][:remarks]
-      #登録されていないなら新規登録
-      else
-        time_card = TimeCard.new(
-        in_at: "#{params[:"#{day}"][:in_at]}",
-        out_at: params["#{day}"][:out_at],
-        date: Date.strptime("#{params[:year]}-#{params[:month]}-#{day}"),
-        remarks: params["#{day}"][:remarks],
-        user_id: params[:id]
-        )
-      end
-      # byebug
-      if !time_card.save then
-        render 'edit'
-        return
+    @time_cards = time_card_params.keys.each do |id|
+      time_card = TimeCard.find(id)
+      if !time_card.update_attributes(time_card_params[id]) then
+        render action: :edit
       end
     end
     flash[:success] = "勤怠編集処理が完了しました。"
@@ -142,7 +159,8 @@ class TimeCardsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def time_card_params
-      params.require(:time_card).permit(:in_at, :out_at, :date, :user_id)
+      # params.require(:time_cards).permit(:in_at, :out_at, :date, :user_id, :id)
+      params.permit(:utf8, :_method, :authenticity_token, :days, :year, :month, :commit, :id, time_cards: [:in_at, :out_at, :date, :user_id, :remarks])[:time_cards]
     end
 end
 

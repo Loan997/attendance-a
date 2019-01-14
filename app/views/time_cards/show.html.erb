@@ -44,7 +44,7 @@
 		    </tr>
 	    </thead>
 	    <tbody>
-	    	<% (1..get_days).each do |day| %>
+	    	<% (2..get_days).each do |day| %>
 		    <tr>
 			  	<td><%= params[:month] %>/<%= day %></td>
 			    <td><%= get_weekday(params[:year], params[:month], day) %></td>
@@ -55,6 +55,7 @@
 			    	<%= form_with url: time_cards_path do |form| %>
 			        <%= hidden_field_tag 'user_id', params[:user_id] %>
 			        <%= hidden_field_tag 'button_type', 'attendance' %>
+			        <%= hidden_field_tag 'date_type', parse_date_type(params[:year], params[:month], day) %>
                 	<%= form.submit "出社", class: "btn btn-default" %>
                		<% end %>
 				<% end %>

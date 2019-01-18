@@ -6,20 +6,26 @@
     <%= form_for(@user) do |f| %>
       <%= render 'shared/error_messages', object: f.object %>
 
+      <div class="field form-group">
       <%= f.label :name %>
       <%= f.text_field :name, class: 'form-control' %>
-
+      </div>
+      <div class="field form-group">
       <%= f.label :email %>
       <%= f.email_field :email, class: 'form-control' %>
-      
+      </div>
+      <div class="field form-group">
       <%= f.label :affiliation %>
       <%= f.text_field :affiliation, class: 'form-control' %>
-
+      </div>
+      <div class="field form-group">
       <%= f.label :password %>
       <%= f.password_field :password, class: 'form-control' %>
-
+      </div>
+      <div class="field form-group">
       <%= f.label :password_confirmation, "パスワード (確認)" %>
       <%= f.password_field :password_confirmation, class: 'form-control' %>
+      </div>
 
       <%= f.submit "編集", class: "btn btn-primary" %>
     <% end %>

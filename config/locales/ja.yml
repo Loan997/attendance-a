@@ -11,8 +11,14 @@ ja:
       time_basic_information:
         designated_working_times: "指定勤務時間"
         basic_time: "基本時間"
+      time_card:
+        in_at: "出社時間"
+        out_at: "退社時間"
+        date: "日付"
+        remarks: "備考"
     errors:
       messages:
+        invalid: "は○○ : ○○のフォーマットで記入してください。"
         record_invalid: "バリデーションに失敗しました: %{errors}"
         restrict_dependent_destroy:
           has_one: "%{record}が存在しているので削除できません"

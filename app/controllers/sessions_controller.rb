@@ -13,7 +13,7 @@ class SessionsController < ApplicationController
         # redirect_back_or user
         redirect_to controller: :time_cards, action: :show, user_id: user.id, year: d.year, month: d.month 
     else
-      flash.now[:danger] = 'Invalid email/password combination'
+      flash.now[:danger] = 'メールアドレスとパスワード の組み合わせが不正です。'
       render 'new'
     end
   end

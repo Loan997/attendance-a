@@ -74,7 +74,7 @@ class UsersController < ApplicationController
 
     # 正しいユーザーかどうかを確認
     def correct_user
-      @user = User.find(params[:user_id])
+      @user = User.find(params[:id])
       redirect_to(root_url) unless current_user?(@user)
     end
 

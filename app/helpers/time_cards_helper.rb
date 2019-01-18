@@ -159,9 +159,29 @@ module TimeCardsHelper
     end
   end
   
+  #今日よりも未来か判断
   def after_today?(day)
     # byebug
-    return "#{params[:year]}-#{params[:month]}-#{day}".to_datetime > Date.today
+    return "#{params[:year]}-#{params[:month]}-#{day}".to_datetime > Date.current
+  end
+  
+  #出社・退社ボタンの両方が押されているか確認
+  def has_pushed_both_button?(day)
+    # byebug
+    time_card = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+    if params[:user_id] == nil then
+      time_card = TimeCard.find_by(user_id:params[:id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+    end
+    return time_card.in_at != nil && time_card.out_at != nil
+  end
+  
+  #どちらのボタンも押されていないか確認
+  def has_pushed_no_button?(day)
+    time_card = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+    if params[:user_id] == nil then
+      time_card = TimeCard.find_by(user_id:params[:id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+    end
+    return time_card.in_at == nil && time_card.out_at == nil
   end
   
   def get_time_cards

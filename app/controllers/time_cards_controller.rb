@@ -77,20 +77,21 @@ class TimeCardsController < ApplicationController
       time_card = TimeCard.find_by(user_id: params[:user_id], date: params[:date_type])
       if time_card == nil then
         time_card = TimeCard.new(
-          in_at: Time.now,
+          in_at: Time.current.strftime('%H:%M:00'),
           out_at: '',
           date: Date.current,
           user_id: params[:user_id]
         )
       else
-        time_card.in_at = Time.now
+        time_card.in_at = Time.current.strftime('%H:%M:00')
       end
     else
+      # byebug
       time_card = TimeCard.find_by(user_id: params[:user_id], date: params[:date_type])
-      time_card.out_at = Time.now
+      time_card.out_at = Time.current.yesterday.strftime('%H:%M:00')
     end
 
-    if time_card.save
+    if time_card.save then
       flash[:success] = "出社/退社処理が完了しました。"
       redirect_to action: 'show', user_id: params[:user_id], year: Date.current.year, month: Date.current.month
     else
@@ -138,14 +139,21 @@ class TimeCardsController < ApplicationController
   # end
   
   def update
-    @time_cards = time_card_params.keys.each do |id|
-      time_card = TimeCard.find(id)
-      if !time_card.update_attributes(time_card_params[id]) then
-        render action: :edit
+    @time_cards = TimeCard.where(id: time_card_params.keys).order('date')
+    ActiveRecord::Base.transaction do
+      @time_cards.each do |time_card|
+        time_card.attributes = time_card_params["#{time_card.id}"]
+        time_card.save!(context: :edit)
+        
       end
+      # byebug
     end
-    flash[:success] = "勤怠編集処理が完了しました。"
-    redirect_to action: 'show', user_id: params[:id], year: params[:year], month: params[:month]
+    # byebug
+      flash[:success] = "勤怠編集処理が完了しました。"
+      redirect_to action: 'show', user_id: params[:id], year: params[:year], month: params[:month]
+    rescue => e
+    # byebug
+      render action: :edit
   end
 
   def destroy

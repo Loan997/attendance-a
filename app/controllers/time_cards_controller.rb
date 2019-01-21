@@ -143,12 +143,15 @@ class TimeCardsController < ApplicationController
     ActiveRecord::Base.transaction do
       @time_cards.each do |time_card|
         time_card.attributes = time_card_params["#{time_card.id}"]
-        time_card.save!(context: :edit)
-        
+        unless time_card.save(context: :edit)
+          @is_error = true
+        end
       end
-      # byebug
+      # バリデーション に引っかかったレコードがあれば、例外を発生させてロールバックさせる。
+      if @is_error == true then
+        raise
+      end
     end
-    # byebug
       flash[:success] = "勤怠編集処理が完了しました。"
       redirect_to action: 'show', user_id: params[:id], year: params[:year], month: params[:month]
     rescue => e

@@ -14,6 +14,11 @@
 		  </tr>
 	    </thead>
 	    <tbody>
+	    	<% if errors_count(@time_cards) != 0 %>
+	    		<div class="alert alert-danger">
+      				エラーが <%= errors_count(@time_cards) %>箇所あります。
+    			</div>
+	    	<% end %>
 	    	<% @time_cards.each.with_index(1) do |time_card, i| %>
 			<tr>
 				<td class="text-center"><%= params[:month] %>/<%= i %></td>
@@ -22,7 +27,7 @@
 			    
 			    
 			    <%= fields_for "time_cards[]", time_card do |f| %>
-			    <%= render 'shared/error_messages', object: f.object %>
+			    <%= render 'shared/timecards_error_messages', object: f.object %>
 			    	<% if after_today?(i) then %>
 					<td><%= f.time_field :in_at, class: 'form-control', readonly: true %></td>
 					<td><%= f.time_field :out_at, class: 'form-control', readonly: true %></td>
@@ -80,6 +85,11 @@
 		  </tr>
 	    </thead>
 	    <tbody>
+	    	<% if errors_count(@time_cards) != 0 %>
+	    		<div class="alert alert-danger">
+      				エラーが <%= errors_count(@time_cards) %>箇所あります。
+    			</div>
+	    	<% end %>
 	    	<% @time_cards.each.with_index(1) do |time_card, i| %>
 			<tr>
 				<td class="text-center"><%= params[:month] %>/<%= i %></td>
@@ -87,7 +97,7 @@
 			    
 			    
 			    <%= fields_for "time_cards[]", time_card do |f| %>
-			    <%= render 'shared/error_messages', object: f.object %>
+			    <%= render 'shared/timecards_error_messages', object: f.object %>
 			    
 			    
 			    	<% if after_today?(i) then %>

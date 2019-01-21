@@ -1,11 +1,9 @@
 class TimeCard < ApplicationRecord
   validates :in_at, format: { with: /([01][0-9]|2[0-3]):[0-5][0-9]/, allow_blank: true }
-  # validates :in_at, numericality: true
   validates :out_at, format: { with: /([01][0-9]|2[0-3]):[0-5][0-9]/, allow_blank: true }
   validates :remarks, length: { maximum: 255 }
   validate :both_time_exists, on: :edit
   validate :time_comparison, on: :edit
-  
   
   #出社時間と退社時間が前後逆になっていないか
   def time_comparison

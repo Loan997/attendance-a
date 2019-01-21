@@ -193,4 +193,13 @@ module TimeCardsHelper
     return @time_cards
   end
   
+  #バリデーションエラー件数を取得
+  def errors_count(time_cards)
+    errors_count = 0
+    for time_card in time_cards do
+      errors_count += time_card.errors.count
+    end
+    return errors_count
+  end
+  
 end

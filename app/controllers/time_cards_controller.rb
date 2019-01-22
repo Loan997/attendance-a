@@ -3,7 +3,7 @@ class TimeCardsController < ApplicationController
   require 'date'
   require 'mathn'
   
-  before_action :admin_user_or_correct_user,     only: [:show, :edit]
+  before_action :admin_user_or_correct_user, only: [:show, :edit]
   
 
   def index
@@ -14,43 +14,27 @@ class TimeCardsController < ApplicationController
     #氏名・所属を取得するためのインスタンス
     user_id = params[:user_id]?params[:user_id]:params[:id]
     @user = User.find(user_id)
+    
     #基本情報を取得
-    basic_minute = TimeBasicInformation.first.basic_time.strftime('%M').to_i
-    basic_hour = TimeBasicInformation.first.basic_time.strftime('%H').to_i
-    @basic_time = (basic_minute / 60).to_f.floor(2) + basic_hour
-    designated_minute = TimeBasicInformation.first.designated_working_times.strftime('%M').to_i
-    designated_hour = TimeBasicInformation.first.designated_working_times.strftime('%H').to_i
-    @designated_time = (designated_minute / 60).to_f.floor(2) + designated_hour
+    get_basic_information
+    
     #出勤日数を取得
     today = "#{params[:year]}-#{params[:month]}-1"
     @counts = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).count
-    #トータル在社時間を取得
-    sum_in_at = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).sum(:in_at)
-    sum_out_at = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).sum(:out_at)
-    if sum_in_at && sum_out_at then
-      @sum_time = sum_in_at - sum_out_at
-    else
-      @sum_time = nil
-    end
+    
+    #在社時間を取得
+    get_stay_time
+    
     #総合勤務時間を取得
     @total_work_time = @counts * @basic_time
     @total_work_time = @total_work_time.floor(2)
+    
     #先月・翌月を取得
-    date = Date.new(params[:year].to_i, params[:month].to_i, 1)
-    @pre_year = date.last_month.year
-    @pre_month = date.last_month.month
-    @next_year = date.next_month.year
-    @next_month = date.next_month.month
+    get_previous_and_next_month
+    
     #合計在社時間を取得
-    time_cards = TimeCard.where.not(in_at: nil).where(date: today.in_time_zone.all_month).where.not(out_at: nil)
-    @sum_stay_time = 0
-    for time_card in time_cards
-      stay_time = ((time_card.out_at - time_card.in_at) / 60 / 60).floor(2)
-      if time_card.in_at > time_card.out_at then
-        stay_time += 24
-      end
-      @sum_stay_time += stay_time
-    end
+    get_sum_stay_time
+    
   end
 
   def new
@@ -129,5 +113,51 @@ class TimeCardsController < ApplicationController
       # params.require(:time_cards).permit(:in_at, :out_at, :date, :user_id, :id)
       params.permit(:utf8, :_method, :authenticity_token, :days, :year, :month, :commit, :id, time_cards: [:in_at, :out_at, :date, :user_id, :remarks])[:time_cards]
     end
+    
+    #基本情報を取得
+    def get_basic_information
+      basic_minute = TimeBasicInformation.first.basic_time.strftime('%M').to_i
+      basic_hour = TimeBasicInformation.first.basic_time.strftime('%H').to_i
+      @basic_time = (basic_minute / 60).to_f.floor(2) + basic_hour
+      designated_minute = TimeBasicInformation.first.designated_working_times.strftime('%M').to_i
+      designated_hour = TimeBasicInformation.first.designated_working_times.strftime('%H').to_i
+      @designated_time = (designated_minute / 60).to_f.floor(2) + designated_hour
+    end
+    
+    #在社時間を取得
+    def get_stay_time 
+      today = "#{params[:year]}-#{params[:month]}-1"
+      sum_in_at = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).sum(:in_at)
+      sum_out_at = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).sum(:out_at)
+      if sum_in_at && sum_out_at then
+        @sum_time = sum_in_at - sum_out_at
+      else
+        @sum_time = nil
+      end
+    end
+    
+    #先月・翌月を取得
+    def get_previous_and_next_month
+      date = Date.new(params[:year].to_i, params[:month].to_i, 1)
+      @pre_year = date.last_month.year
+      @pre_month = date.last_month.month
+      @next_year = date.next_month.year
+      @next_month = date.next_month.month
+    end
+    
+    #合計在社時間を取得
+    def get_sum_stay_time
+      today = "#{params[:year]}-#{params[:month]}-1"
+      time_cards = TimeCard.where.not(in_at: nil).where(date: today.in_time_zone.all_month).where.not(out_at: nil)
+      @sum_stay_time = 0
+      for time_card in time_cards
+        stay_time = ((time_card.out_at - time_card.in_at) / 60 / 60).floor(2)
+        if time_card.in_at > time_card.out_at then
+          stay_time += 24
+        end
+        @sum_stay_time += stay_time
+      end
+    end
+    
 end
 

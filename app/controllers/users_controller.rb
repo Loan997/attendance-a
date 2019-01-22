@@ -9,11 +9,6 @@ class UsersController < ApplicationController
     @users = User.paginate(page: params[:page])
   end
 
-  def show
-    @user = User.find(params[:id])
-    # @microposts = @user.microposts.paginate(page: params[:page])
-  end
-
   def new
     @user = User.new
   end
@@ -33,12 +28,10 @@ class UsersController < ApplicationController
   end
 
   def update
-    if @user.update_attributes(user_params)
-      # byebug
+    if @user.update_attributes!(user_params)
       flash[:success] = "アカウント情報が更新されました。"
       redirect_to controller: 'time_cards', action: 'show', user_id: @user.id, year: Date.current.year, month: Date.current.month
     else
-      # redirect_to controller: 'time_cards', action: 'show', user_id: @user.id, year: Date.current.year, month: Date.current.month
       render 'edit'
     end
   end
@@ -47,20 +40,6 @@ class UsersController < ApplicationController
     User.find(params[:id]).destroy
     flash[:success] = "該当ユーザーが削除されました。"
     redirect_to users_url
-  end
-  
-  def following
-    @title = "Following"
-    @user  = User.find(params[:id])
-    @users = @user.following.paginate(page: params[:page])
-    render 'show_follow'
-  end
-
-  def followers
-    @title = "Followers"
-    @user  = User.find(params[:id])
-    @users = @user.followers.paginate(page: params[:page])
-    render 'show_follow'
   end
 
   private

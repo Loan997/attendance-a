@@ -10,7 +10,6 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:session][:password])
         log_in user
         params[:session][:remember_me] == '1' ? remember(user) : forget(user)
-        # redirect_back_or user
         redirect_to controller: :time_cards, action: :show, user_id: user.id, year: d.year, month: d.month 
     else
       flash.now[:danger] = 'メールアドレスとパスワード の組み合わせが不正です。'

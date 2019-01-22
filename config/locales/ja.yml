@@ -18,6 +18,8 @@ ja:
         remarks: "備考"
     errors:
       messages:
+        blank: "を入力してください。"
+        too_long: "は%{count}文字以内で入力してください。"
         invalid: "は○○ : ○○のフォーマットで記入してください。"
         record_invalid: "バリデーションに失敗しました: %{errors}"
         restrict_dependent_destroy:

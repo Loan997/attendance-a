@@ -1,6 +1,4 @@
-<% if params[:user_id] then %>
-
-<%= form_tag("/time_cards/#{params[:user_id]}", method: "patch" ) do %>
+<%= form_tag("/time_cards/#{ params[:user_id] ? params[:user_id] : params[:id] }", method: "patch" ) do %>
 <div class="table-responsive">
     <table class="table table-bordered table-striped">
 	    <thead>
@@ -20,39 +18,37 @@
     			</div>
 	    	<% end %>
 	    	<% @time_cards.each.with_index(1) do |time_card, i| %>
-			<tr>
-				<td class="text-center"><%= params[:month] %>/<%= i %></td>
-			    <td class="text-center"><%= get_weekday(params[:year], params[:month], i) %></td>
-			    
-			    
-			    
-			    <%= fields_for "time_cards[]", time_card do |f| %>
-			    <%= render 'shared/timecards_error_messages', object: f.object %>
+				<tr>
+					<td class="text-center"><%= params[:month] %>/<%= i %></td>
+			  	<td class="text-center"><%= get_weekday(params[:year], params[:month], i) %></td>
+
+			  	<%= fields_for "time_cards[]", time_card do |f| %>
+			  		<%= render 'shared/timecards_error_messages', object: f.object %>
 			    	<% if after_today?(i) then %>
-					<td><%= f.time_field :in_at, class: 'form-control', readonly: true %></td>
-					<td><%= f.time_field :out_at, class: 'form-control', readonly: true %></td>
-					<td><%= get_stay_time(params[:user_id], params[:year], params[:month], i) %></td>
-					<td><%= f.text_field :remarks, class: 'form-control', readonly: true %></td>
-					<% elsif is_today?(params[:year], params[:month], i) then %>
-						<% if has_pushed_both_button?(i) || has_pushed_no_button?(i) then %>
-							<td><%= f.time_field :in_at, class: 'form-control' %></td>
-							<td><%= f.time_field :out_at, class: 'form-control' %></td>
-							<td><%= get_stay_time(params[:user_id], params[:year], params[:month], i) %></td>
-							<td><%= f.text_field :remarks, class: 'form-control' %></td>
-						<% else %>
+							<td><% f.time_field :in_at, class: 'form-control', readonly: true %></td>
+							<td><% f.time_field :out_at, class: 'form-control', readonly: true %></td>
+							<td><% get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
+							<td><% f.text_field :remarks, class: 'form-control', readonly: true %></td>
+						<% elsif is_today?(params[:year], params[:month], i) then %>
+							<% if has_pushed_both_button?(i) || has_pushed_no_button?(i) then %>
+								<td><%= f.time_field :in_at, class: 'form-control' %></td>
+								<td><%= f.time_field :out_at, class: 'form-control' %></td>
+								<td><%= get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
+								<td><%= f.text_field :remarks, class: 'form-control' %></td>
+							<% else %>
 			    			<td><%= f.time_field :in_at, class: 'form-control', readonly: true %></td>
-							<td><%= f.time_field :out_at, class: 'form-control', readonly: true %></td>
-							<td><%= get_stay_time(params[:user_id], params[:year], params[:month], i) %></td>
-							<td><%= f.text_field :remarks, class: 'form-control', readonly: true %></td>
+								<td><%= f.time_field :out_at, class: 'form-control', readonly: true %></td>
+								<td><%= get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
+								<td><%= f.text_field :remarks, class: 'form-control', readonly: true %></td>
+							<% end %>
+			 			<% else %>
+			 				<td><%= f.time_field :in_at, class: 'form-control' %></td>
+							<td><%= f.time_field :out_at, class: 'form-control' %></td>
+							<td><%= get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
+							<td><%= f.text_field :remarks, class: 'form-control' %></td>
 						<% end %>
-			 		<% else %>
-			 			<td><%= f.time_field :in_at, class: 'form-control' %></td>
-						<td><%= f.time_field :out_at, class: 'form-control' %></td>
-						<td><%= get_stay_time(params[:user_id], params[:year], params[:month], i) %></td>
-						<td><%= f.text_field :remarks, class: 'form-control' %></td>
-					<% end %>
-			 	<% end %>
-        	 </tr>
+			 		<% end %>
+      	</tr>
 		    <% end %>
 	    </tbody>
     </table>
@@ -61,84 +57,15 @@
 <%= hidden_field_tag 'year', params[:year] %>
 <%= hidden_field_tag 'month', params[:month] %>
 <div class="row">
-<%= submit_tag('編集を保存する', class: "btn btn-primary col-xs-4 col-xs-offset-2") %>
-<%= link_to "キャンセル", {:action => "show", :user_id => params[:user_id], :year => params[:year], :month => params[:month]},class: "btn btn-primary col-xs-4 col-xs-offset-1"%>
+	<%= submit_tag('編集を保存する', class: "btn btn-primary col-xs-4 col-xs-offset-2") %>
+	<%= link_to "キャンセル", {:action => "show", :user_id => params[:user_id]?params[:user_id]:params[:id], :year => params[:year], :month => params[:month]},class: "btn btn-primary col-xs-4 col-xs-offset-1"%>
 </div>
 <% end %>
-<% end %>
 
 
 
-<% if params[:user_id] == nil then %>
 
-<%= form_tag("/time_cards/#{params[:id]}", method: "patch" ) do %>
-<div class="table-responsive">
-    <table class="table table-bordered table-striped">
-	    <thead>
-	    	<tr>
-				<th class="text-center">日付</th>
-				<th class="text-center">曜日</th>
-				<th class="text-center">出社</th>
-				<th class="text-center">退社</th>
-				<th class="text-center">在社時間</th>
-				<th class="text-center">備考</th>
-		  </tr>
-	    </thead>
-	    <tbody>
-	    	<% if errors_count(@time_cards) != 0 %>
-	    		<div class="alert alert-danger">
-      				エラーが <%= errors_count(@time_cards) %>箇所あります。
-    			</div>
-	    	<% end %>
-	    	<% @time_cards.each.with_index(1) do |time_card, i| %>
-			<tr>
-				<td class="text-center"><%= params[:month] %>/<%= i %></td>
-			    <td class="text-center"><%= get_weekday(params[:year], params[:month], i) %></td>
+
 			    
-			    
-			    <%= fields_for "time_cards[]", time_card do |f| %>
-			    <%= render 'shared/timecards_error_messages', object: f.object %>
-			    
-			    
-			    	<% if after_today?(i) then %>
-					<td><%= f.time_field :in_at, class: 'form-control', readonly: true %></td>
-					<td><%= f.time_field :out_at, class: 'form-control', readonly: true %></td>
-					<td><%= get_stay_time(params[:user_id], params[:year], params[:month], i) %></td>
-					<td><%= f.text_field :remarks, class: 'form-control', readonly: true %></td>
-					<% elsif is_today?(params[:year], params[:month], i) then %>
-						<% if has_pushed_both_button?(i) || has_pushed_no_button?(i) then %>
-							<td><%= f.time_field :in_at, class: 'form-control' %></td>
-							<td><%= f.time_field :out_at, class: 'form-control' %></td>
-							<td><%= get_stay_time(params[:user_id], params[:year], params[:month], i) %></td>
-							<td><%= f.text_field :remarks, class: 'form-control' %></td>
-						<% else %>
-			    			<td><%= f.time_field :in_at, class: 'form-control', readonly: true %></td>
-							<td><%= f.time_field :out_at, class: 'form-control', readonly: true %></td>
-							<td><%= get_stay_time(params[:user_id], params[:year], params[:month], i) %></td>
-							<td><%= f.text_field :remarks, class: 'form-control', readonly: true %></td>
-						<% end %>
-			 		<% else %>
-			 			<td><%= f.time_field :in_at, class: 'form-control' %></td>
-						<td><%= f.time_field :out_at, class: 'form-control' %></td>
-						<td><%= get_stay_time(params[:user_id], params[:year], params[:month], i) %></td>
-						<td><%= f.text_field :remarks, class: 'form-control' %></td>
-					<% end %>
-			 	<% end %>
-        	 </tr>
-		    <% end %>
-	    </tbody>
-    </table>
-</div>
-<%= hidden_field_tag 'user_id', params[:id] %>
-<%= hidden_field_tag 'days', get_days %>
-<%= hidden_field_tag 'year', params[:year] %>
-<%= hidden_field_tag 'month', params[:month] %>
-<div class="row">
-<%= submit_tag('編集を保存する', class: "btn btn-primary col-xs-4 col-xs-offset-2") %>
-<%= link_to "キャンセル", {:action => "show", :user_id => params[:user_id], :year => params[:year], :month => params[:month]},class: "btn btn-primary col-xs-4 col-xs-offset-1"%>
-</div>
-<% end %>
-<% end %>
-
-
+			   
 

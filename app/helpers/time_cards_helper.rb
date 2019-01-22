@@ -115,17 +115,6 @@ module TimeCardsHelper
   end
   
   #出社時間を取得
-  # def get_time_card(time_cards, day)
-  #   time_card = time_cards.where(date: Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d')).first
-  #   if time_card then
-  #     time_card = time_card.in_at
-  #   else
-  #     time_card = ''
-  #   end
-  #   return time_card
-  # end
-  
-  #出社時間を取得
   def get_in_at(day)
     if params[:user_id] then
       time_card = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
@@ -161,13 +150,11 @@ module TimeCardsHelper
   
   #今日よりも未来か判断
   def after_today?(day)
-    # byebug
     return "#{params[:year]}-#{params[:month]}-#{day}".to_datetime > Date.current
   end
   
   #出社・退社ボタンの両方が押されているか確認
   def has_pushed_both_button?(day)
-    # byebug
     time_card = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
     if params[:user_id] == nil then
       time_card = TimeCard.find_by(user_id:params[:id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
@@ -186,10 +173,7 @@ module TimeCardsHelper
   
   def get_time_cards
     today = Date.current
-    # byebug 
-    # test = 1
     @time_cards = TimeCard.where(user_id: params[:id]).where(date: today.in_time_zone.all_month).order("date")
-    # byebug
     return @time_cards
   end
   

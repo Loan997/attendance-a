@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
     
     # 正しいユーザーか、もしくは管理者かどうかを確認
     def admin_user_or_correct_user
-      @user = User.find(params[:user_id])
+      @user = User.find(params[:user_id]?params[:user_id]:params[:id])
       unless @user == current_user
         unless current_user.admin
           redirect_to(root_url)

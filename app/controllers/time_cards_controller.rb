@@ -129,6 +129,7 @@ class TimeCardsController < ApplicationController
       today = "#{params[:year]}-#{params[:month]}-1"
       sum_in_at = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).sum(:in_at)
       sum_out_at = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).sum(:out_at)
+      sum_in_at = 0 if sum_in_at == "0"
       if sum_in_at && sum_out_at then
         @sum_time = sum_in_at - sum_out_at
       else

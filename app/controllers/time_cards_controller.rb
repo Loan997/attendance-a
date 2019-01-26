@@ -41,12 +41,10 @@ class TimeCardsController < ApplicationController
 
   # GET /time_cards/1/edit
   def edit
-    today = Date.current
-    
     (1..view_context.get_days).each do |day|
       TimeCard.find_or_create_by(user_id: params[:user_id], date: "#{params[:year]}-#{params[:month]}-#{day}")
     end
-    @time_cards = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).order("date")
+    @time_cards = TimeCard.where(user_id: params[:user_id]).where(date: "#{params[:year]}-#{params[:month]}-1".in_time_zone.all_month).order("date")
   end
 
   # POST /time_cards

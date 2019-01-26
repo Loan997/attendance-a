@@ -22,9 +22,6 @@ class TimeCardsController < ApplicationController
     today = "#{params[:year]}-#{params[:month]}-1"
     @counts = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).count
     
-    #在社時間を取得
-    # get_stay_time
-    
     #総合勤務時間を取得
     @total_work_time = @counts * @basic_time
     @total_work_time = @total_work_time.floor(2)
@@ -123,19 +120,6 @@ class TimeCardsController < ApplicationController
       designated_hour = TimeBasicInformation.first.designated_working_times.strftime('%H').to_i
       @designated_time = (designated_minute / 60).to_f.floor(2) + designated_hour
     end
-    
-    #トータル在社時間を取得
-    # def get_stay_time 
-    #   today = "#{params[:year]}-#{params[:month]}-1"
-    #   sum_in_at = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).sum(:in_at)
-    #   sum_out_at = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).sum(:out_at)
-    #   sum_in_at = sum_in_at.to_i if sum_in_at == "0"
-    #   if sum_in_at && sum_out_at then
-    #     @sum_time = sum_in_at - sum_out_at
-    #   else
-    #     @sum_time = nil
-    #   end
-    # end
     
     #先月・翌月を取得
     def get_previous_and_next_month

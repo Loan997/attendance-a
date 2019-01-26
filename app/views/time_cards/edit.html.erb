@@ -25,10 +25,10 @@
 			  	<%= fields_for "time_cards[]", time_card do |f| %>
 			  		<%= render 'shared/timecards_error_messages', object: f.object %>
 			    	<% if after_today?(i) then %>
-							<td><% f.time_field :in_at, class: 'form-control', readonly: true %></td>
-							<td><% f.time_field :out_at, class: 'form-control', readonly: true %></td>
+							<td><%= f.time_field :in_at, class: 'form-control', readonly: true %></td>
+							<td><%= f.time_field :out_at, class: 'form-control', readonly: true %></td>
 							<td><% get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
-							<td><% f.text_field :remarks, class: 'form-control', readonly: true %></td>
+							<td><%= f.text_field :remarks, class: 'form-control', readonly: true %></td>
 						<% elsif is_today?(params[:year], params[:month], i) then %>
 							<% if has_pushed_both_button?(i) || has_pushed_no_button?(i) then %>
 								<td><%= f.time_field :in_at, class: 'form-control' %></td>

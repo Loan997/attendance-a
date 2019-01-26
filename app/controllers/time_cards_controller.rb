@@ -32,7 +32,7 @@ class TimeCardsController < ApplicationController
     get_previous_and_next_month
     
     #合計在社時間を取得
-    get_sum_stay_time
+    get_sum_stay_time(@user)
     
   end
 
@@ -133,9 +133,9 @@ class TimeCardsController < ApplicationController
     end
     
     #合計在社時間を取得
-    def get_sum_stay_time
+    def get_sum_stay_time(user)
       today = "#{params[:year]}-#{params[:month]}-1"
-      time_cards = TimeCard.where.not(in_at: nil).where(date: today.in_time_zone.all_month).where.not(out_at: nil)
+      time_cards = TimeCard.where(user_id: user.id).where.not(in_at: nil).where(date: today.in_time_zone.all_month).where.not(out_at: nil)
       @sum_stay_time = 0
       for time_card in time_cards
         stay_time = ((time_card.out_at - time_card.in_at) / 60 / 60).floor(2)

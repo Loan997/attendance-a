@@ -3,8 +3,9 @@ class TimeCardsController < ApplicationController
   require 'date'
   require 'mathn'
   
+  before_action :logged_in_user, only: [:show, :edit, :update]
   before_action :admin_user_or_correct_user, only: [:show, :edit]
-  
+  # before_action :logged_in_user, only: [:edit, :update]
 
   def index
   end
@@ -23,6 +24,7 @@ class TimeCardsController < ApplicationController
     @counts = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).count
     
     #総合勤務時間を取得
+    # byebug
     @total_work_time = @counts * @basic_time
     @total_work_time = @total_work_time.floor(2)
     

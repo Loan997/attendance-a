@@ -23,7 +23,8 @@ class ApplicationController < ActionController::Base
       @user = User.find(params[:user_id]?params[:user_id]:params[:id])
       unless @user == current_user
         unless current_user.admin
-          redirect_to(root_url)
+          flash[:danger] = "他ユーザーのページへは、アクセスできません。"
+          redirect_to action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
         end
       end
     end

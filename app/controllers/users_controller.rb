@@ -28,7 +28,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    if @user.update_attributes!(user_params)
+    if @user.update_attributes(user_params)
       flash[:success] = "アカウント情報が更新されました。"
       redirect_to controller: 'time_cards', action: 'show', user_id: @user.id, year: Date.current.year, month: Date.current.month
     else

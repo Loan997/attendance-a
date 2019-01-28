@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20190109051905) do
     t.date "date"
     t.integer "user_id"
     t.string "remarks"
+    t.index ["date", "user_id"], name: "index_time_cards_on_date_and_user_id", unique: true
     t.index ["user_id"], name: "index_time_cards_on_user_id"
   end
 
@@ -37,7 +38,6 @@ ActiveRecord::Schema.define(version: 20190109051905) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "affiliation"
-    t.string "remarks"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 

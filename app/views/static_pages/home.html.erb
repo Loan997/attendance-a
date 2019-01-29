@@ -1,5 +1,13 @@
+<!--ログインしているか-->
 <% if logged_in? %>
-  <%= redirect_timecard_show %>
+  <!--管理者かどうか-->
+  <% if current_user.admin? %>
+    <%= render 'static_pages/admin_home' %>
+  <!--管理者でないなら-->
+  <% else %>
+    <%= redirect_timecard_show %>
+  <% end %>
+<!--ログインしていないなら-->
 <% else %>
   <%= render 'static_pages/user_not_logged_in' %>
 <% end %>

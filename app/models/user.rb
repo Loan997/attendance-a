@@ -12,6 +12,12 @@ class User < ApplicationRecord
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
   validates :affiliation,  presence: true, length: { maximum: 50 }
   
+  has_many :overtime_application_target, class_name: 'TimeCard', :foreign_key => 'overtime_application_target'
+  has_many :application_targer_for_a_month, class_name: 'TimeCard', :foreign_key => 'application_targer_for_a_month'
+  has_many :applying_attendance_change_target, class_name: 'TimeCard', :foreign_key => 'applying_attendance_change_target'
+  has_many :time_cards, dependent: :destroy
+
+  
   # 渡された文字列のハッシュ値を返す
   def User.digest(string)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :

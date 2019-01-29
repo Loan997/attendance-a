@@ -5,6 +5,16 @@ class TimeCard < ApplicationRecord
   validate :both_time_exists, on: :edit
   validate :time_comparison, on: :edit
   
+  belongs_to :overtime_application_target, class_name: 'User', :foreign_key => 'overtime_application_target'
+  belongs_to :application_targer_for_a_month, class_name: 'User', :foreign_key => 'application_targer_for_a_month'
+  belongs_to :applying_attendance_change_target, class_name: 'User', :foreign_key => 'applying_attendance_change_target'
+  belongs_to :user
+  
+  belongs_to :is_overtime_applying, class_name: 'ApplyingState', :foreign_key => 'is_overtime_applying'
+  belongs_to :is_attendance_application_for_a_month, class_name: 'ApplyingState', :foreign_key => 'is_attendance_application_for_a_month'
+  belongs_to :is_applying_attendance_change, class_name: 'ApplyingState', :foreign_key => 'is_applying_attendance_change'
+  
+  
   #出社時間と退社時間が前後逆になっていないか
   def time_comparison
     if in_at != nil && out_at != nil then

@@ -10,29 +10,33 @@ class TimeCardsController < ApplicationController
   def index
   end
 
-  # GET /time_cards/1
   def show
     #氏名・所属を取得するためのインスタンス
     user_id = params[:user_id]?params[:user_id]:params[:id]
     @user = User.find(user_id)
     
-    #基本情報を取得
-    get_basic_information
-    
+    # #基本情報を取得
+    # get_basic_information
+    # byebug
     #出勤日数を取得
     today = "#{params[:year]}-#{params[:month]}-1"
     @counts = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).count
     
-    #総合勤務時間を取得
-    # byebug
-    @total_work_time = @counts * @basic_time
-    @total_work_time = @total_work_time.floor(2)
+    # #総合勤務時間を取得
+    # # byebug
+    # @total_work_time = @counts * @basic_time
+    # @total_work_time = @total_work_time.floor(2)
     
     #先月・翌月を取得
     get_previous_and_next_month
     
     #合計在社時間を取得
     get_sum_stay_time(@user)
+    
+    (1..view_context.get_days).each do |day|
+      TimeCard.find_or_create_by!(user_id: params[:user_id], date: "#{params[:year]}-#{params[:month]}-#{day}")
+    end
+    
     
   end
 
@@ -42,9 +46,42 @@ class TimeCardsController < ApplicationController
   # GET /time_cards/1/edit
   def edit
     (1..view_context.get_days).each do |day|
-      TimeCard.find_or_create_by(user_id: params[:user_id], date: "#{params[:year]}-#{params[:month]}-#{day}")
+      TimeCard.find_or_create_by!(user_id: params[:user_id], date: "#{params[:year]}-#{params[:month]}-#{day}")
     end
     @time_cards = TimeCard.where(user_id: params[:user_id]).where(date: "#{params[:year]}-#{params[:month]}-1".in_time_zone.all_month).order("date")
+  end
+  
+  # 残業申請フォーム
+  def apply
+    @time_card = TimeCard.find_by(user_id:current_user.id, date:"#{params[:year]}-#{params[:month]}-#{params[:day]}")
+    @supervisors = User.where(superior: 1)
+    # byebug
+    # byebug
+    # @user = User.find(current_user.id)
+    # render 'apply'
+    
+  end
+  
+  #勤怠申請の承認フォーム
+  def approval_attendance
+    # byebug
+    @time_cards = TimeCard.where(is_attendance_application_for_a_month: 1)
+                    .or(TimeCard.where(is_attendance_application_for_a_month: 2))
+                    .where(application_targer_for_a_month: current_user.id)
+                    .order("user_id", "date")
+    
+    @supervisors = User.where(superior: 1)
+  end
+  
+  #残業申請の承認フォーム
+  def approval_overtime_working
+    # byebug
+    @time_cards = TimeCard.where(is_overtime_applying: 1)
+                    .or(TimeCard.where(is_overtime_applying: 2))
+                    .where(overtime_application_target: current_user.id)
+                    .order("user_id", "date")
+                    
+    @supervisors = User.where(superior: 1)
   end
 
   # POST /time_cards
@@ -76,11 +113,13 @@ class TimeCardsController < ApplicationController
     end
   end
   
+  #勤怠更新
   def update
-    @time_cards = TimeCard.where(id: time_card_params.keys).order('date')
+    @time_cards = TimeCard.where(id: time_cards_params.keys).order('date')
+    # byebug
     ActiveRecord::Base.transaction do
       @time_cards.each do |time_card|
-        time_card.attributes = time_card_params["#{time_card.id}"]
+        time_card.attributes = time_cards_params["#{time_card.id}"]
         unless time_card.save(context: :edit)
           @is_error = true
         end
@@ -95,9 +134,81 @@ class TimeCardsController < ApplicationController
     rescue => e
       render action: :edit
   end
+  
+  # 勤怠申請、残業申請
+  def apply_update
+    # 勤怠申請の場合
+    if params[:type] == "for_a_month_application"
+      @time_card = TimeCard.find_by(user_id: current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-1", '%Y-%m-%d'))
+      # byebug
+      @time_card.update!(is_attendance_application_for_a_month: ApplyingState.find_by(status: "申請中"),
+                        application_targer_for_a_month: User.find(params[:test]))
+      flash[:success] = "勤怠申請が完了しました。"
+      redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
+    # 残業申請の場合
+    elsif params[:time_card][:type] == "overtime_application"
+      @time_card = TimeCard.find(params[:time_card][:id])
+      # byebug
+      if @time_card.update_attributes(time_card_params)
+        @time_card.overtime_application_target = User.find(params[:time_card][:test])
+        @time_card.is_overtime_applying = ApplyingState.find_by(status: "申請中")
+        # if params[:next_day].nil?
+        #   @time_card.end_estimated_time = @time_card.end_estimated_time - 24
+        # end
+        @time_card.save!
+        flash[:success] = "残業申請が完了しました。"
+        redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
+      else
+        render 'edit'
+      end
+    # # 勤怠申請の場合
+    # elsif params[:type] == "for_a_month_application"
+    #   @time_card = TimeCard.find_by(user_id: current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-1", '%Y-%m-%d'))
+    #   @time_card.update(is_attendance_application_for_a_month: ApplyingState.find_by(status: "申請中"),
+    #                     application_targer_for_a_month: User.find(params[:test]))
+    #   @time_card.save!
+    #   flash[:success] = "勤怠申請が完了しました。"
+    #   redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
+    # end
+    end
+  end
+  
+  #１ヶ月分の勤怠申請の承認フォームから更新
+  def approval_attendance_update
+    @time_cards = TimeCard.where(id: time_cards_params.keys).order('date')
+    count_change = 0
+    @time_cards.each do |time_card|
+      # byebug
+      if params[:time_cards]["#{time_card.id}"][:change]
+        time_card.is_attendance_application_for_a_month = ApplyingState.find(params[:time_cards]["#{time_card.id}"][:is_attendance_application_for_a_month])
+        time_card.save!
+        count_change += 1
+      end
+    end
+    flash[:success] = "#{@time_cards.count}件中#{count_change}件、勤怠申請を更新しました。"
+        redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
+  end
+  
+  #残業申請の承認フォームから更新
+  def approval_overtime_working_update
+    @time_cards = TimeCard.where(id: time_cards_params.keys).order('date')
+    count_change = 0
+    @time_cards.each do |time_card|
+      # byebug
+      if params[:time_cards]["#{time_card.id}"][:change]
+        time_card.is_overtime_applying = ApplyingState.find(params[:time_cards]["#{time_card.id}"][:is_attendance_application_for_a_month])
+        time_card.save!
+        count_change += 1
+      end
+    end
+    flash[:success] = "#{@time_cards.count}件中#{count_change}件、残業申請を更新しました。"
+        redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
+  end
+  
 
   def destroy
   end
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -106,20 +217,32 @@ class TimeCardsController < ApplicationController
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
-    def time_card_params
+    def time_cards_params
       # params.require(:time_cards).permit(:in_at, :out_at, :date, :user_id, :id)
-      params.permit(:utf8, :_method, :authenticity_token, :days, :year, :month, :commit, :id, time_cards: [:in_at, :out_at, :date, :user_id, :remarks])[:time_cards]
+      params.permit(:utf8, :_method, :authenticity_token, :days, :year, :month, :commit, :id, 
+                    time_cards: [:id, :in_at, :out_at, :date, :user_id, :remarks, :end_estimated_time, :business_outline, :is_overtime_applying, 
+                    :overtime_application_target, :is_attendance_application_for_a_month, :application_targer_for_a_month, 
+                    :is_applying_attendance_change, :applying_attendance_change_target])[:time_cards]
     end
     
-    #基本情報を取得
-    def get_basic_information
-      basic_minute = TimeBasicInformation.first.basic_time.strftime('%M').to_i
-      basic_hour = TimeBasicInformation.first.basic_time.strftime('%H').to_i
-      @basic_time = (basic_minute / 60).to_f.floor(2) + basic_hour
-      designated_minute = TimeBasicInformation.first.designated_working_times.strftime('%M').to_i
-      designated_hour = TimeBasicInformation.first.designated_working_times.strftime('%H').to_i
-      @designated_time = (designated_minute / 60).to_f.floor(2) + designated_hour
+    def time_card_params
+      # params.require(:time_cards).permit(:in_at, :out_at, :date, :user_id, :id)
+      params.permit(:utf8, :_method, :authenticity_token, :days, :year, :month, :commit, :id, 
+                    time_card: [:id, :in_at, :out_at, :date, :user_id, :remarks, :end_estimated_time, :business_outline, :is_overtime_applying, 
+                    :overtime_application_target, :is_attendance_application_for_a_month, :application_targer_for_a_month, 
+                     :applying_attendance_change_target, :next_day])[:time_card]
     end
+    
+    # #基本情報を取得
+    # def get_basic_information
+    #   basic_minute = TimeBasicInformation.first.basic_time.strftime('%M').to_i
+    #   basic_hour = TimeBasicInformation.first.basic_time.strftime('%H').to_i
+    #   @basic_time = (basic_minute / 60).to_f.floor(2) + basic_hour
+    #   designated_minute = TimeBasicInformation.first.designated_working_times.strftime('%M').to_i
+    #   designated_hour = TimeBasicInformation.first.designated_working_times.strftime('%H').to_i
+    #   @designated_time = (designated_minute / 60).to_f.floor(2) + designated_hour
+    # end
+    
     
     #先月・翌月を取得
     def get_previous_and_next_month

@@ -1,0 +1,37 @@
+<div class="modal-dialog">
+  <div class="modal-content">
+    <% user_id_temp = '' %>
+    <%= form_tag("/time_cards/approval_attendance/update", method: "patch"  ) do %>
+      <% @time_cards.each do |time_card| %>
+        <% if time_card.user_id != user_id_temp %>
+          <h3>【<%= time_card.user.name %>からの１カ月分の勤怠申請】</h3>
+        <% end %>
+          <div class="table-responsive table-striped">
+            <%= fields_for "time_cards[]", time_card do |f| %>
+              <table class="table table-striped table-condensed table-bordered">
+                <thead>
+                  <tr>
+                    <th>月</th>
+                    <th>指示者確認㊞</th>
+                    <th>変更</th>
+                    <th>勤怠を確認する</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><%= time_card.date.strftime("%m") %>月</td>
+                    <td><%= f.select :is_attendance_application_for_a_month, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, :include_blank => true %></td>
+                    <td><%= check_box_tag "[time_cards][#{time_card.id}][change]" %></td>
+                    <td>勤怠を確認する<%=  %></td>
+                  </tr>
+                </tbody>
+              </table>
+            <% end %>
+          </div>
+      
+        <% user_id_temp = time_card.user_id %>
+      <% end %>
+      <%= submit_tag('変更を送信する', class: "btn btn-primary col-xs-4 col-xs-offset-2") %>
+    <% end %>
+  </div>
+</div>

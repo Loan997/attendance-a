@@ -1,32 +1,35 @@
-<%= form_with(model: time_card, local: true) do |form| %>
-  <% if time_card.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(time_card.errors.count, "error") %> prohibited this time_card from being saved:</h2>
 
-      <ul>
-      <% time_card.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+<div class="modal-dialog">
+  <div class="modal-content">
+    <h3>【残業申請】</h3>
+    <div class="table-responsive table-striped">
+      <%= form_with model: @time_card, url: apply_update_url do |form| %>
+      <table class="table table-striped table-condensed table-bordered">
+        <thead>
+        <tr>
+          <th>日付</th>
+          <th>曜日</th>
+          <th>終了予定時間</th>
+          <th>翌日</th>
+          <th>業務処理内容</th>
+          <th>指示者確認㊞</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= params[:month] %>/<%= params[:day] %></td>
+            <td><%= get_weekday(params[:year], params[:month], params[:day]) %></td>
+            <td><%= form.time_field :end_estimated_time %></td>
+            <td><%= form.check_box :next_day, {} %></td>
+            <td><%= form.text_field :business_outline %></td>
+            <td><%= form.select :test, User.where(superior: true).where.not(id: current_user.id).collect{ |p| [ p.name, p.id ] }, :include_blank => true %></td>
+          </tr>
+        </tbody>
+      </table>
+      <%= form.hidden_field :id, value: @time_card.id %>
+      <%= form.hidden_field :type, value: "overtime_application" %>
+      <%= form.submit "残業を申請する", :class => "btn btn-primary" %>
       <% end %>
-      </ul>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= form.label :in_at %>
-    <%= form.time_select :in_at, id: :time_card_in_at %>
   </div>
-
-  <div class="field">
-    <%= form.label :out_at %>
-    <%= form.time_select :out_at, id: :time_card_out_at %>
-  </div>
-
-  <div class="field">
-    <%= form.label :date %>
-    <%= form.date_select :date, id: :time_card_date %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-<% end %>
+</div>

@@ -7,33 +7,55 @@
 			    	<%= params[:year] %>年<%= params[:month] %>月&nbsp;&nbsp;時間管理表
 			    	<%= link_to ">" , {:action => "show", :user_id => params[:user_id], :year => @next_year, :month => @next_month},class: "btn btn-primary"%>
 			    </td>
-			    <td>指定勤務時間&nbsp;&nbsp;<%= @designated_time %></td>
-			    <td colspan="3">基本時間&nbsp;&nbsp;<%= @basic_time %></td>
+			    <td>
+			    	指定勤務開始時間&nbsp;&nbsp;<%= @user.designated_working_start_time ? @user.designated_working_start_time.strftime('%H:%M') : '' %><br>
+			    	指定勤務終了時間&nbsp;&nbsp;<%= @user.designated_working_end_time ? @user.designated_working_end_time.strftime('%H:%M') : '' %>
+			    </td>
+			    <td colspan="3">基本時間&nbsp;&nbsp;<%= @user.basic_time ? @user.basic_time.strftime('%H:%M') : '' %></td>
 			    <td>初日&nbsp;&nbsp;<%= params[:month] %>/1</td>
 		    </tr>
 		    <tr class="text-center">
 			    <td>所属&nbsp;&nbsp;<%= @user.affiliation %></td>
 			    <td>氏名&nbsp;&nbsp;<%= @user.name %></td>
 			    <td>コード</td>
-			    <td></td>
+			    <td><%= @user.employee_number %></td>
 			    <td>出勤日数&nbsp;&nbsp;<%= @counts %>日</td>
 			    <td>締め&nbsp;&nbsp;<%= params[:month] %>/<%= get_days %></td>
 		    </tr>
 	    </tbody>
     </table>
   </div>
-  <%= link_to "勤怠を編集", {:action => "edit", :user_id => params[:user_id], :year => params[:year], :month => params[:month]},class: "btn btn-primary" %>
-  <p></p>
+  <div>
+  	<% if current_user.superior? %>
+  		<%= render 'information_button' %>
+  	<% end %>
+  </div>
+  <div>
+  	<%= link_to "勤怠を編集", {:action => "edit", :user_id => params[:user_id], :year => params[:year], :month => params[:month]},class: "btn btn-primary" %>
+  	<%= link_to "CSVを出力", {:action => "edit", :user_id => params[:user_id], :year => params[:year], :month => params[:month]},class: "btn btn-primary" %>
+  	<br>
+  	<%= link_to "勤怠修正ログ（承認済）", {:action => "edit", :user_id => params[:user_id], :year => params[:year], :month => params[:month]},class: "btn btn-primary" %>
+  	<p></p>
+  </div>
   <div class="table-responsive">
     <table class="table table-bordered table-striped">
 	    <thead>
 	      <tr>
-			    <th rowspan="2" class="text-center">日付</th>
-			    <th rowspan="2" class="text-center">曜日</th>
-			    <th colspan="3" class="text-center">出社</th>
+	      	<th rowspan="3" class="text-center">残業申請</th>
+			    <th rowspan="3" class="text-center">日付</th>
+			    <th rowspan="3" class="text-center">曜日</th>
+			    <th colspan="8" class="text-center">実績</th>
+			    <th colspan="5" class="text-center">所定外勤務</th>
+		    </tr>
+		    <tr>
+		    	<th colspan="3" class="text-center">出社</th>
 			    <th colspan="3" class="text-center">退社</th>
 			    <th rowspan="2" class="text-center">在社時間</th>
 			    <th rowspan="2" class="text-center">備考</th>
+			    <th colspan="2" class="text-center">終了予定時間</th>
+			    <th rowspan="2" class="text-center">時間外時間</th>
+			    <th rowspan="2" class="text-center">業務処理内容</th>
+			    <th rowspan="2" class="text-center">指示者確認㊞</th>
 		    </tr>
 		    <tr>
 			    <th class="text-center">時</th>
@@ -42,11 +64,26 @@
 			    <th class="text-center">時</th>
 			    <th class="text-center">分</th>
 			    <th></th>
+			    <th class="text-center">時</th>
+			    <th class="text-center">分</th>
 		    </tr>
 	    </thead>
 	    <tbody>
 	    	<% (1..get_days).each do |day| %>
 		    <tr>
+		    	
+		    	<td>
+		    		
+		    		<%= link_to "残業申請", { :action => "apply", :year => params[:year], :month => params[:month], :day => day }, class: "btn btn-primary", remote: true %>
+		    		</td>
+<!--		    	<td><button class="btn btn-primary" data-toggle="modal" data-target="#modal-sample">-->
+<!--    モーダルを表示-->
+<!--</button></td>-->
+
+			  	<div id="user-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+			  	
+			  	
+			  	
 			  	<td class="text-center"><%= params[:month] %>/<%= day %></td>
 			    <td class="text-center"><%= get_weekday(params[:year], params[:month], day) %></td>
 			    <td><%= get_hour_in_at(params[:user_id], params[:year], params[:month], day) %></td>
@@ -57,8 +94,8 @@
 			        <%= hidden_field_tag 'user_id', params[:user_id] %>
 			        <%= hidden_field_tag 'button_type', 'attendance' %>
 			        <%= hidden_field_tag 'date_type', parse_date_type(params[:year], params[:month], day) %>
-                	<%= form.submit "出社", class: "btn btn-default" %>
-               		<% end %>
+              <%= form.submit "出社", class: "btn btn-primary" %>
+            <% end %>
 				<% end %>
 			    </td>
 			    <td><%= get_hour_out_at(params[:user_id], params[:year], params[:month], day) %></td>
@@ -70,7 +107,7 @@
 			        	<%= form_with url: time_cards_path do |form| %>
 			          	<%= hidden_field_tag 'user_id', params[:user_id] %>
 			          	<%= hidden_field_tag 'date_type', parse_date_type(params[:year], params[:month], day) %>
-                		<%= form.submit "退社", class: "btn btn-default" %>
+                		<%= form.submit "退社", class: "btn btn-primary" %>
               			<% end %>
             		<% end %>
           		</td>
@@ -78,14 +115,37 @@
 			    <td>
 			    	<%= get_remarks(day) %>
 			    </td>
+			    <td><%= get_hour_end_estimated_time(day) %></td>
+			    <td><%= get_minute_end_estimated_time(day) %></td>
+			    <td><%= off_hours_time(current_user.id, params[:year], params[:month], day) %></td>
+			    <td><%= get_business_outline(day) %></td>
+			    <td><%= get_overtime_application_target(day) %></td>
 		    </tr>
 		    <% end %>
 		    <tr>
-			    <td colspan="2"><%= @total_work_time %></td>
-			    <td colspan="6"></td>
+		    	<td></td>
+		    	<td colspan="2"></td>
+		    	<td colspan="6"></td>
 			    <td><%= @sum_stay_time %></td>
-			    <td></td>
+			    <td colspan="5">
+			    <td>
+			    	勤怠申請：<%= get_is_attendance_application_for_a_month %>
+			    	<%= form_with url: apply_update_url, method: "patch" do |form| %>
+  						<%= form.select :test, User.where(superior: true).where.not(id: current_user.id).collect{ |p| [ p.name, p.id ] }, :include_blank => true %>
+  						<%= form.hidden_field :type, value: "for_a_month_application" %>
+  						<%= form.hidden_field :year, value: params[:year] %>
+  						<%= form.hidden_field :month, value: params[:month] %>
+  						<%= form.submit "申請",class: "btn btn-primary" %>
+						<% end %>
+			    </td>
 		    </tr>
 	    </tbody>
     </table>
+    
+    
+    
+   
+
+
+
   </div>

@@ -10,5 +10,10 @@ Rails.application.routes.draw do
   resources :time_cards
   get '/time_cards/:user_id/:year/:month' => 'time_cards#show'
   get '/time_cards/:user_id/:year/:month/edit' => 'time_cards#edit'
-  
+  get '/time_cards/apply/:user_id/:year/:month/:day' => 'time_cards#apply'
+  patch '/time_cards/approval_attendance/update' => 'time_cards#approval_attendance_update', as: 'approval_attendance_update'
+  get '/time_cards/approval_attendance/:user_id/:year/:month' => 'time_cards#approval_attendance'
+  patch '/time_cards/apply/update' => 'time_cards#apply_update', as: 'apply_update'
+  get '/time_cards/approval_overtime_working/:user_id/:year/:month' => 'time_cards#approval_overtime_working'
+  patch '/time_cards/approval_overtime_working/update' => 'time_cards#approval_overtime_working_update'
 end

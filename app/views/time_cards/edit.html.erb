@@ -7,8 +7,10 @@
 				<th class="text-center">曜日</th>
 				<th class="text-center">出社</th>
 				<th class="text-center">退社</th>
+				<th class="text-center">翌日</th>
 				<th class="text-center">在社時間</th>
 				<th class="text-center">備考</th>
+				<th class="text-center">指示者確認㊞</th>
 		  </tr>
 	    </thead>
 	    <tbody>
@@ -27,25 +29,33 @@
 			    	<% if after_today?(i) then %>
 							<td><%= f.time_field :in_at, class: 'form-control', readonly: true %></td>
 							<td><%= f.time_field :out_at, class: 'form-control', readonly: true %></td>
+							<td><%= check_box_tag "[time_cards][#{time_card.id}][next_day]" %></td>
 							<td><% get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
 							<td><%= f.text_field :remarks, class: 'form-control', readonly: true %></td>
+							<td><%= f.select :is_applying_attendance_change, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, :include_blank => true %></td>
 						<% elsif is_today?(params[:year], params[:month], i) then %>
 							<% if has_pushed_both_button?(i) || has_pushed_no_button?(i) then %>
 								<td><%= f.time_field :in_at, class: 'form-control' %></td>
 								<td><%= f.time_field :out_at, class: 'form-control' %></td>
+								<td><%= check_box_tag "[time_cards][#{time_card.id}][next_day]" %></td>
 								<td><%= get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
 								<td><%= f.text_field :remarks, class: 'form-control' %></td>
+								<td><%= f.select :is_applying_attendance_change, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, :include_blank => true %></td>
 							<% else %>
 			    			<td><%= f.time_field :in_at, class: 'form-control', readonly: true %></td>
 								<td><%= f.time_field :out_at, class: 'form-control', readonly: true %></td>
+								<td><%= check_box_tag "[time_cards][#{time_card.id}][next_day]" %></td>
 								<td><%= get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
 								<td><%= f.text_field :remarks, class: 'form-control', readonly: true %></td>
+								<td><%= f.select :is_applying_attendance_change, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, :include_blank => true %></td>
 							<% end %>
 			 			<% else %>
 			 				<td><%= f.time_field :in_at, class: 'form-control' %></td>
 							<td><%= f.time_field :out_at, class: 'form-control' %></td>
+							<td><%= check_box_tag "[time_cards][#{time_card.id}][next_day]" %></td>
 							<td><%= get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
 							<td><%= f.text_field :remarks, class: 'form-control' %></td>
+							<td><%= f.select :is_applying_attendance_change, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, :include_blank => true %></td>
 						<% end %>
 			 		<% end %>
       	</tr>

@@ -7,7 +7,7 @@
 
 <!--勤怠変更のお知らせ-->
 <% if is_applying_attendance_change? %>
-  <div class="text-danger">【勤怠変更のお知らせ】</div>
+  <div><%= link_to "【勤怠変更申請のお知らせ】", { :action => "approval_attendance_change", :year => params[:year], :month => params[:month] }, class: "text-danger", remote: true %></div>
 <% else %>
   <div class="">【勤怠変更のお知らせ】</div>
 <% end %>

@@ -83,6 +83,16 @@ class TimeCardsController < ApplicationController
                     
     @supervisors = User.where(superior: 1)
   end
+  
+  #勤怠変更の承認フォーム
+  def approval_attendance_change
+    @time_cards = TimeCard.where(is_applying_attendance_change: 1)
+                    .or(TimeCard.where(is_applying_attendance_change: 2))
+                    .where(applying_attendance_change_target: current_user.id)
+                    .order("user_id", "date")
+                    
+    @supervisors = User.where(superior: 1)
+  end
 
   # POST /time_cards
   # POST /time_cards.json
@@ -115,11 +125,30 @@ class TimeCardsController < ApplicationController
   
   #勤怠更新
   def update
+    # 変更申請になった時の時刻を覚えておいて。そのタイミングの時刻をバッファとして覚えておけば、変更前の時間も取得できるかも？
     @time_cards = TimeCard.where(id: time_cards_params.keys).order('date')
     # byebug
     ActiveRecord::Base.transaction do
+      # byebug
       @time_cards.each do |time_card|
+        # byebug
+        time_card.previous_in_at = time_card.in_at
+        time_card.previous_out_at = time_card.out_at
+      
         time_card.attributes = time_cards_params["#{time_card.id}"]
+      
+        if params[:time_cards]["#{time_card.id}"][:applying_attendance_change_target] != "" && params[:time_cards]["#{time_card.id}"][:applying_attendance_change_target].present?
+          time_card.applying_attendance_change_target = User.find(params[:time_cards]["#{time_card.id}"][:applying_attendance_change_target])
+          time_card.is_applying_attendance_change = ApplyingState.find(2)
+          
+          
+          
+          # 変更申請になった時の時刻を覚えておいて。そのタイミングの時刻をバッファとして覚えておけば、変更前の時間も取得できるかも？
+          
+          
+          
+        end
+        
         unless time_card.save(context: :edit)
           @is_error = true
         end
@@ -142,7 +171,7 @@ class TimeCardsController < ApplicationController
       @time_card = TimeCard.find_by(user_id: current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-1", '%Y-%m-%d'))
       # byebug
       @time_card.update!(is_attendance_application_for_a_month: ApplyingState.find_by(status: "申請中"),
-                        application_targer_for_a_month: User.find(params[:test]))
+                        application_targer_for_a_month: params[:test].present? ? User.find(params[:test]) : nil)
       flash[:success] = "勤怠申請が完了しました。"
       redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
     # 残業申請の場合
@@ -150,7 +179,8 @@ class TimeCardsController < ApplicationController
       @time_card = TimeCard.find(params[:time_card][:id])
       # byebug
       if @time_card.update_attributes(time_card_params)
-        @time_card.overtime_application_target = User.find(params[:time_card][:test])
+        # byebugs
+        @time_card.overtime_application_target =params[:time_card][:test].present? ? User.find(params[:time_card][:test]) : nil
         @time_card.is_overtime_applying = ApplyingState.find_by(status: "申請中")
         # if params[:next_day].nil?
         #   @time_card.end_estimated_time = @time_card.end_estimated_time - 24
@@ -180,7 +210,7 @@ class TimeCardsController < ApplicationController
     @time_cards.each do |time_card|
       # byebug
       if params[:time_cards]["#{time_card.id}"][:change]
-        time_card.is_attendance_application_for_a_month = ApplyingState.find(params[:time_cards]["#{time_card.id}"][:is_attendance_application_for_a_month])
+        time_card.is_attendance_application_for_a_month = params[:time_cards]["#{time_card.id}"][:is_attendance_application_for_a_month].present? ? ApplyingState.find(params[:time_cards]["#{time_card.id}"][:is_attendance_application_for_a_month]) : nil
         time_card.save!
         count_change += 1
       end
@@ -205,6 +235,22 @@ class TimeCardsController < ApplicationController
         redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
   end
   
+  #勤怠変更の承認フォームからの更新
+  def approval_attendance_change_update
+    @time_cards = TimeCard.where(id: time_cards_params.keys).order('date')
+    count_change = 0
+    @time_cards.each do |time_card|
+      # byebug
+      if params[:time_cards]["#{time_card.id}"][:change]
+        time_card.is_applying_attendance_change = params[:time_cards]["#{time_card.id}"][:is_applying_attendance_change].present? ? ApplyingState.find(params[:time_cards]["#{time_card.id}"][:is_applying_attendance_change]) : nil
+        time_card.save!
+        count_change += 1
+      end
+    end
+    flash[:success] = "#{@time_cards.count}件中#{count_change}件、勤怠変更申請を更新しました。"
+        redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
+  end
+  
 
   def destroy
   end
@@ -222,7 +268,7 @@ class TimeCardsController < ApplicationController
       params.permit(:utf8, :_method, :authenticity_token, :days, :year, :month, :commit, :id, 
                     time_cards: [:id, :in_at, :out_at, :date, :user_id, :remarks, :end_estimated_time, :business_outline, :is_overtime_applying, 
                     :overtime_application_target, :is_attendance_application_for_a_month, :application_targer_for_a_month, 
-                    :is_applying_attendance_change, :applying_attendance_change_target])[:time_cards]
+                    :is_applying_attendance_change, :is_leaving_next_day])[:time_cards]
     end
     
     def time_card_params

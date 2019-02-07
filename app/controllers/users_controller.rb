@@ -30,9 +30,13 @@ class UsersController < ApplicationController
   def update
     if @user.update_attributes(user_params)
       flash[:success] = "アカウント情報が更新されました。"
-      redirect_to controller: 'time_cards', action: 'show', user_id: @user.id, year: Date.current.year, month: Date.current.month
+      if current_user.admin?
+        redirect_to action: 'index'
+      else
+        redirect_to controller: 'time_cards', action: 'show', user_id: @user.id, year: Date.current.year, month: Date.current.month
+      end
     else
-      render 'edit'
+      render 'index'
     end
   end
   
@@ -41,12 +45,17 @@ class UsersController < ApplicationController
     flash[:success] = "該当ユーザーが削除されました。"
     redirect_to users_url
   end
+  
+  #出勤中の社員一覧ページの表示
+  def in_attendance
+    @time_cards = TimeCard.where(date: Date.current).where.not(in_at: nil).where(out_at: nil)
+  end
 
   private
 
     def user_params
       params.require(:user).permit(:name, :email, :affiliation, :password,
-                                   :password_confirmation)
+                                   :password_confirmation, :employee_number, :uid, :basic_time, :designated_working_start_time, :designated_working_end_time)
     end
     
     # beforeフィルター

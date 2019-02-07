@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190203114524) do
+ActiveRecord::Schema.define(version: 20190204151540) do
 
   create_table "applying_states", force: :cascade do |t|
     t.string "status"
@@ -48,6 +48,9 @@ ActiveRecord::Schema.define(version: 20190203114524) do
     t.integer "is_applying_attendance_change"
     t.integer "applying_attendance_change_target"
     t.boolean "next_day"
+    t.boolean "is_leaving_next_day"
+    t.time "previous_in_at"
+    t.time "previous_out_at"
     t.index ["date", "user_id"], name: "index_time_cards_on_date_and_user_id", unique: true
     t.index ["user_id"], name: "index_time_cards_on_user_id"
   end

@@ -5,9 +5,11 @@ Rails.application.routes.draw do
   get    'login'   => 'sessions#new'
   post   'login'   => 'sessions#create'
   delete 'logout'  => 'sessions#destroy'
+  get '/users/in_attendance' => 'users#in_attendance'
   resources :users
-  resources :time_basic_informations, only: [:edit, :update]
+  resources :time_basic_informations, only: [:index, :edit, :update]
   resources :time_cards
+
   get '/time_cards/:user_id/:year/:month' => 'time_cards#show'
   get '/time_cards/:user_id/:year/:month/edit' => 'time_cards#edit'
   get '/time_cards/apply/:user_id/:year/:month/:day' => 'time_cards#apply'
@@ -16,4 +18,6 @@ Rails.application.routes.draw do
   patch '/time_cards/apply/update' => 'time_cards#apply_update', as: 'apply_update'
   get '/time_cards/approval_overtime_working/:user_id/:year/:month' => 'time_cards#approval_overtime_working'
   patch '/time_cards/approval_overtime_working/update' => 'time_cards#approval_overtime_working_update'
+  get '/time_cards/approval_attendance_change/:user_id/:year/:month' => 'time_cards#approval_attendance_change'
+  patch '/time_cards/approval_attendance_change/update' => 'time_cards#approval_attendance_change_update'
 end

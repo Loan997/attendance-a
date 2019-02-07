@@ -9,6 +9,8 @@ class TimeBasicInformationsController < ApplicationController
   # def index
   #   @time_basic_informations = TimeBasicInformation.all
   # end
+  def index
+  end
 
   # GET /time_basic_informations/1
   # GET /time_basic_informations/1.json

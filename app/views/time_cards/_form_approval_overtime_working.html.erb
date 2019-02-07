@@ -1,7 +1,7 @@
 <div class="modal-dialog">
   <div class="modal-content">
     <% user_id_temp = '' %>
-    <%= form_tag("/time_cards/approval_overtime_working/update", method: "patch"  ) do %>
+    <%= form_tag("/time_cards/approval_attendance_change/update", method: "patch"  ) do %>
       <% @time_cards.each do |time_card| %>
         <% if time_card.user_id != user_id_temp %>
           <h3>【<%= time_card.user.name %>からの残業申請】</h3>

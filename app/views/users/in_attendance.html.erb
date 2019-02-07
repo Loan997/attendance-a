@@ -1,0 +1,22 @@
+<% provide(:title, '出勤中社員一覧') %>
+<h1>出勤中社員一覧</h1>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th>社員番号</th>
+        <th>名前</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @time_cards.each do |time_card| %>
+        <tr>
+          <td><%= time_card.user.employee_number ? time_card.user.employee_number : '' %></td>
+          <td><%= time_card.user.name %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+  

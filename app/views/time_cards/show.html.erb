@@ -119,7 +119,14 @@
 			    <td><%= get_minute_end_estimated_time(day) %></td>
 			    <td><%= off_hours_time(current_user.id, params[:year], params[:month], day) %></td>
 			    <td><%= get_business_outline(day) %></td>
-			    <td><%= get_overtime_application_target(day) %></td>
+			    <td>
+			    	<% if get_overtime_application_target(day) %>
+			    		<div><%= get_overtime_application_target(day) %></div>
+			    	<% end %>
+			    	<% if get_applying_attendance_change_target(day) %>
+			    		<div><%= get_applying_attendance_change_target(day) %></div>
+			    	<% end %>
+			    </td>
 		    </tr>
 		    <% end %>
 		    <tr>

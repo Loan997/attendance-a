@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  in_at: 2019-02-07 14:49:41
+  out_at: 2019-02-07 14:49:41
+  date: 2019-02-07
+  previous_in_at: 2019-02-07 14:49:41
+  previous_out_at: 2019-02-07 14:49:41
+  applying_attendance_change_target: 1
+
+two:
+  user_id: 1
+  in_at: 2019-02-07 14:49:41
+  out_at: 2019-02-07 14:49:41
+  date: 2019-02-07
+  previous_in_at: 2019-02-07 14:49:41
+  previous_out_at: 2019-02-07 14:49:41
+  applying_attendance_change_target: 1

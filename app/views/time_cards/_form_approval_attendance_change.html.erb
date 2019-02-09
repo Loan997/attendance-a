@@ -42,12 +42,12 @@
                     
                     <td><%= time_card.date.strftime("%m/%d") %></td>
                     <td><%= get_weekday(time_card.date.strftime("%y"), time_card.date.strftime("%m"), time_card.date.strftime("%d")) %></td>
-                    <td><%= time_card.previous_in_at ? time_card.previous_out_at.strftime('%H') : '' %></td>
-                    <td><%= time_card.previous_in_at ? time_card.previous_out_at.strftime('%M') : '' %></td>
+                    <td><%= time_card.previous_in_at ? time_card.previous_in_at.strftime('%H') : '' %></td>
+                    <td><%= time_card.previous_in_at ? time_card.previous_in_at.strftime('%M') : '' %></td>
                     <td><%= time_card.previous_out_at ? time_card.previous_out_at.strftime('%H') : '' %></td>
                     <td><%= time_card.previous_out_at ? time_card.previous_out_at.strftime('%M') : '' %></td>
-                    <td><%= time_card.in_at ? time_card.out_at.strftime('%H') : '' %></td>
-                    <td><%= time_card.in_at ? time_card.out_at.strftime('%M') : '' %></td>
+                    <td><%= time_card.in_at ? time_card.in_at.strftime('%H') : '' %></td>
+                    <td><%= time_card.in_at ? time_card.in_at.strftime('%M') : '' %></td>
                     <td><%= time_card.out_at ? time_card.out_at.strftime('%H') : '' %></td>
                     <td><%= time_card.out_at ? time_card.out_at.strftime('%M') : '' %></td>
                     <td><%= time_card.remarks %></td>

@@ -10,10 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190204151540) do
+ActiveRecord::Schema.define(version: 20190207144941) do
 
   create_table "applying_states", force: :cascade do |t|
     t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "approval_histories", force: :cascade do |t|
+    t.integer "user_id"
+    t.time "in_at"
+    t.time "out_at"
+    t.date "date"
+    t.time "previous_in_at"
+    t.time "previous_out_at"
+    t.integer "applying_attendance_change_target"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

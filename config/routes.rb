@@ -1,14 +1,19 @@
 Rails.application.routes.draw do
 
+
   root                'static_pages#home'
   get    'signup'  => 'users#new'
   get    'login'   => 'sessions#new'
   post   'login'   => 'sessions#create'
   delete 'logout'  => 'sessions#destroy'
   get '/users/in_attendance' => 'users#in_attendance'
+  get 'approval_histories/index'
+  
   resources :users
   resources :time_basic_informations, only: [:index, :edit, :update]
   resources :time_cards
+  resources :bases
+
 
   get '/time_cards/:user_id/:year/:month' => 'time_cards#show'
   get '/time_cards/:user_id/:year/:month/edit' => 'time_cards#edit'
@@ -20,4 +25,6 @@ Rails.application.routes.draw do
   patch '/time_cards/approval_overtime_working/update' => 'time_cards#approval_overtime_working_update'
   get '/time_cards/approval_attendance_change/:user_id/:year/:month' => 'time_cards#approval_attendance_change'
   patch '/time_cards/approval_attendance_change/update' => 'time_cards#approval_attendance_change_update'
+  
+  get '/time_cards/confirm/:user_id/:year/:month/:month_flag' => 'time_cards#confirm', as: 'time_card_confirm'
 end

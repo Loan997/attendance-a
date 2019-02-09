@@ -245,6 +245,17 @@ class TimeCardsController < ApplicationController
         time_card.is_applying_attendance_change = params[:time_cards]["#{time_card.id}"][:is_applying_attendance_change].present? ? ApplyingState.find(params[:time_cards]["#{time_card.id}"][:is_applying_attendance_change]) : nil
         time_card.save!
         count_change += 1
+        if time_card.is_applying_attendance_change.id == 3 && time_card.applying_attendance_change_target.present?
+          ApprovalHistory.create(
+                            user_id: time_card.user_id,
+                            in_at: time_card.in_at,
+                            out_at: time_card.out_at,
+                            date: time_card.date,
+                            applying_attendance_change_target: time_card.applying_attendance_change_target,
+                            previous_in_at: time_card.previous_in_at,
+                            previous_out_at: time_card.previous_out_at
+                            )
+        end
       end
     end
     flash[:success] = "#{@time_cards.count}件中#{count_change}件、勤怠変更申請を更新しました。"
@@ -253,6 +264,33 @@ class TimeCardsController < ApplicationController
   
 
   def destroy
+  end
+  
+  #勤怠確認画面の表示
+  def confirm
+    #氏名・所属を取得するためのインスタンス
+    @user = User.find(params[:user_id])
+    
+    # #基本情報を取得
+    # get_basic_information
+    # byebug
+    #出勤日数を取得
+    today = "#{params[:year]}-#{params[:month]}-1"
+    @counts = TimeCard.where(user_id: params[:user_id]).where(date: today.in_time_zone.all_month).where.not(out_at: nil).count
+    
+    # #総合勤務時間を取得
+    # # byebug
+    # @total_work_time = @counts * @basic_time
+    # @total_work_time = @total_work_time.floor(2)
+    
+    #先月・翌月を取得
+    # get_previous_and_next_month
+    
+    #合計在社時間を取得
+    get_sum_stay_time(@user)
+    
+    # (1..view_context.get_days).each do |day|
+    #   TimeCard.find_or_create_by!(user_id: params[:user_id], date: "#{params[:year]}-#{params[:month]}-#{day}")
   end
   
 

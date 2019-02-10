@@ -32,7 +32,7 @@
   </div>
   <div>
   	<%= link_to "勤怠を編集", {:action => "edit", :user_id => params[:user_id], :year => params[:year], :month => params[:month]},class: "btn btn-primary" %>
-  	<%= link_to "CSVを出力", {:action => "edit", :user_id => params[:user_id], :year => params[:year], :month => params[:month]},class: "btn btn-primary" %>
+  	<%= link_to "CSVを出力", time_cards_export_path(format: :csv), class: "btn btn-primary" %>
   	<br>
   	<%= link_to "勤怠修正ログ（承認済）", approval_histories_index_path ,class: "btn btn-primary" %>
   	<p></p>

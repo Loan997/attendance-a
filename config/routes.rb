@@ -9,11 +9,13 @@ Rails.application.routes.draw do
   get '/users/in_attendance' => 'users#in_attendance'
   get 'approval_histories/index'
   
+  post 'users/import' => 'users#import'
+  get '/time_cards/:user_id/:year/:month/export' => 'time_cards#export', as: 'time_cards_export'
+  
   resources :users
   resources :time_basic_informations, only: [:index, :edit, :update]
   resources :time_cards
   resources :bases
-
 
   get '/time_cards/:user_id/:year/:month' => 'time_cards#show'
   get '/time_cards/:user_id/:year/:month/edit' => 'time_cards#edit'

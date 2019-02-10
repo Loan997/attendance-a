@@ -293,6 +293,19 @@ class TimeCardsController < ApplicationController
     #   TimeCard.find_or_create_by!(user_id: params[:user_id], date: "#{params[:year]}-#{params[:month]}-#{day}")
   end
   
+  #CSVエクスポート
+  def export
+    @time_cards = TimeCard.where(user_id: params[:user_id]).where(date: "#{params[:year]}-#{params[:month]}-1".in_time_zone.all_month).order("date")
+    respond_to do |format|
+      format.html do
+          #html用の処理を書く
+      end 
+      format.csv do
+          send_data render_to_string, filename: "#{User.find(params[:user_id]).name}_#{params[:year]}年#{params[:month]}月.csv", type: :csv
+      end
+    end
+  end
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.

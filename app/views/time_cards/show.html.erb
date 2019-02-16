@@ -80,7 +80,6 @@
 <!--    モーダルを表示-->
 <!--</button></td>-->
 
-			  	<div id="user-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 			  	
 			  	
 			  	
@@ -149,9 +148,23 @@
 	    </tbody>
     </table>
     
-    
-    
-   
+    <div id="user-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+    <script>
+				var modal = location.search
+				if(modal.match(/attendance/)){
+    			$(function(){
+  					$('#attendance')[0].click();
+					});
+				}else if(modal.match(/change/)){
+					$(function(){
+  					$('#change')[0].click();
+					});
+				}else if(modal.match(/overtime/)){
+					$(function(){
+  					$('#overtime')[0].click();
+					});
+				}
+   </script>
 
 
 

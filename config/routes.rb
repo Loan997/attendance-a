@@ -16,8 +16,10 @@ Rails.application.routes.draw do
   resources :time_basic_informations, only: [:index, :edit, :update]
   resources :time_cards
   resources :bases
+  
 
-  get '/time_cards/:user_id/:year/:month' => 'time_cards#show'
+  get '/time_cards/:user_id/:year/:month' => 'time_cards#show', as: 'attendance_show'
+  
   get '/time_cards/:user_id/:year/:month/edit' => 'time_cards#edit'
   get '/time_cards/apply/:user_id/:year/:month/:day' => 'time_cards#apply'
   patch '/time_cards/approval_attendance/update' => 'time_cards#approval_attendance_update', as: 'approval_attendance_update'
@@ -29,4 +31,7 @@ Rails.application.routes.draw do
   patch '/time_cards/approval_attendance_change/update' => 'time_cards#approval_attendance_change_update'
   
   get '/time_cards/confirm/:user_id/:year/:month/:month_flag' => 'time_cards#confirm', as: 'time_card_confirm'
+  get '/time_cards/confirm/back/:user_id/:year/:month/:month_flag' => 'time_cards#back', as: 'time_card_back'
+  
+  # get '/time_cards/:user_id/:year/:month/:modal' => 'time_cards#show'
 end

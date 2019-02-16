@@ -19,6 +19,7 @@ class ApplicationController < ActionController::Base
     end
     
     # 正しいユーザーか、もしくは管理者かどうかを確認
+    # byebug
     def admin_user_or_correct_user
       @user = User.find(params[:user_id]?params[:user_id]:params[:id])
       unless @user == current_user

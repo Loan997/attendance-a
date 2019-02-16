@@ -24,7 +24,6 @@
                 </thead>
                 <tbody>
                   <tr>
-                    
                     <td><%= time_card.date.strftime("%m/%d") %></td>
                     <td><%= get_weekday(time_card.date.strftime("%y"), time_card.date.strftime("%m"), time_card.date.strftime("%d")) %></td>
                     <td><%= time_card.end_estimated_time.strftime('%H:%M') %></td>
@@ -34,7 +33,7 @@
                     <td><%= time_card.business_outline %></td>
                     <td><%= f.select :is_attendance_application_for_a_month, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, :include_blank => true %></td>
                     <td><%= check_box_tag "[time_cards][#{time_card.id}][change]" %></td>
-                    <td>勤怠を確認する<%=  %></td>
+                    <td><%= link_to "確認", time_card_confirm_path(user_id: time_card.user_id, date: time_card.date, month_flag: 0, confirm: "overtime"), class: "btn btn-primary" %></td>
                   </tr>
                 </tbody>
               </table>

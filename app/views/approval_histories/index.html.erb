@@ -1,6 +1,39 @@
 <% provide(:title, '勤怠修正ログ（承認済）') %>
 <h1>勤怠修正ログ（承認済）</h1>
 
+<div>
+	<button class="btn btn-default">リセット</button>
+</div>
+
+<div class="input-group">
+	<span class="input-group-btn">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+			年
+			<span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="#">2017</a></li>
+			<li><a href="#">2018</a></li>
+			<li><a href="#">2019</a></li>
+		</ul>
+	</span>
+	<input type="text" class="form-control" placeholder="テキスト入力欄" readonly>
+</div>
+<div class="input-group">
+	<span class="input-group-btn">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+			月
+			<span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<% (1..12).each do |month| %>
+				<li><a href="#"><%= month %></a></li>
+			<% end %>
+		</ul>
+	</span>
+	<input type="text" class="form-control" placeholder="テキスト入力欄" readonly>
+</div>
+
 <div class="table-responsive">
   <table class="table table-bordered table-striped">
     <thead>

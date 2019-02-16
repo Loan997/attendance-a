@@ -1,20 +1,20 @@
 <!--所属長申請のお知らせ-->
 <% if is_attendance_application_for_a_month? %>
-  <div><%= link_to "【所属長承認申請のお知らせ】", { :action => "approval_attendance", :year => params[:year], :month => params[:month] }, class: "text-danger", remote: true %></div>
+  <div><%= link_to "【所属長承認申請のお知らせ】", { :action => "approval_attendance", :year => params[:year], :month => params[:month] }, class: "text-danger", id: "attendance", remote: true %></div>
 <% else %>
   <div class="">【所属長承認申請のお知らせ】</div>
 <% end %>
 
 <!--勤怠変更のお知らせ-->
 <% if is_applying_attendance_change? %>
-  <div><%= link_to "【勤怠変更申請のお知らせ】", { :action => "approval_attendance_change", :year => params[:year], :month => params[:month] }, class: "text-danger", remote: true %></div>
+  <div><%= link_to "【勤怠変更申請のお知らせ】", { :action => "approval_attendance_change", :year => params[:year], :month => params[:month] }, class: "text-danger", id: "change", remote: true %></div>
 <% else %>
   <div class="">【勤怠変更のお知らせ】</div>
 <% end %>
 
 <!--残業申請のお知らせ-->
 <% if is_overtime_applying? %>
-   <div><%= link_to "【残業申請のお知らせ】", { :action => "approval_overtime_working", :year => params[:year], :month => params[:month] }, class: "text-danger", remote: true %></div>
+   <div><%= link_to "【残業申請のお知らせ】", { :action => "approval_overtime_working", :year => params[:year], :month => params[:month] }, class: "text-danger", id: "overtime", remote: true %></div>
 <% else %>
   <div class="">【残業申請のお知らせ】</div>
 <% end %>

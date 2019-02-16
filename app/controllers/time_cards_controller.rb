@@ -35,6 +35,15 @@ class TimeCardsController < ApplicationController
     
     (1..view_context.get_days).each do |day|
       TimeCard.find_or_create_by!(user_id: params[:user_id], date: "#{params[:year]}-#{params[:month]}-#{day}")
+      
+      
+      @time_cards = TimeCard.where(is_attendance_application_for_a_month: 1)
+                    .or(TimeCard.where(is_attendance_application_for_a_month: 2))
+                    .where(application_targer_for_a_month: current_user.id)
+                    .order("user_id", "date")
+    
+    @supervisors = User.where(superior: 1)
+    
     end
     
     
@@ -226,7 +235,7 @@ class TimeCardsController < ApplicationController
     @time_cards.each do |time_card|
       # byebug
       if params[:time_cards]["#{time_card.id}"][:change]
-        time_card.is_overtime_applying = ApplyingState.find(params[:time_cards]["#{time_card.id}"][:is_attendance_application_for_a_month])
+        time_card.is_overtime_applying = ApplyingState.find(params[:time_cards]["#{time_card.id}"][:is_overtime_applying])
         time_card.save!
         count_change += 1
       end
@@ -266,6 +275,18 @@ class TimeCardsController < ApplicationController
   def destroy
   end
   
+  def back
+    # byebug
+    
+     
+
+    redirect_to action: 'show', user_id: params[:user_id], year: Date.current.year, month: Date.current.month
+    # show
+    # redirect_to action: 'approval_attendance', user_id: params[:user_id], year: params[:year], month: params[:month]
+    # approval_attendance
+    
+  end
+  
   #勤怠確認画面の表示
   def confirm
     #氏名・所属を取得するためのインスタンス
@@ -291,6 +312,12 @@ class TimeCardsController < ApplicationController
     
     # (1..view_context.get_days).each do |day|
     #   TimeCard.find_or_create_by!(user_id: params[:user_id], date: "#{params[:year]}-#{params[:month]}-#{day}")
+    @time_cards = TimeCard.where(is_attendance_application_for_a_month: 1)
+                    .or(TimeCard.where(is_attendance_application_for_a_month: 2))
+                    .where(application_targer_for_a_month: current_user.id)
+                    .order("user_id", "date")
+    
+    @supervisors = User.where(superior: 1)
   end
   
   #CSVエクスポート

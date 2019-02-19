@@ -16,7 +16,7 @@ class User < ApplicationRecord
   has_many :application_targer_for_a_month, class_name: 'TimeCard', :foreign_key => 'application_targer_for_a_month'
   has_many :applying_attendance_change_target, class_name: 'TimeCard', :foreign_key => 'applying_attendance_change_target'
   has_many :time_cards, dependent: :destroy
-  has_many :approval_historyies, dependent: :destroy
+  has_many :approval_histories, dependent: :destroy
   has_many :applying_attendance_change_target, class_name: 'ApprovalHistory', :foreign_key => 'applying_attendance_change_target'
 
   

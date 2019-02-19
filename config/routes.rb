@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   delete 'logout'  => 'sessions#destroy'
   get '/users/in_attendance' => 'users#in_attendance'
   get 'approval_histories/index'
+  get 'approval_histories/search'
   
   post 'users/import' => 'users#import'
   get '/time_cards/:user_id/:year/:month/export' => 'time_cards#export', as: 'time_cards_export'

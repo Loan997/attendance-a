@@ -2,24 +2,25 @@
 <h1>勤怠修正ログ（承認済）</h1>
 
 <div>
-	<button class="btn btn-default">リセット</button>
+	<button class="btn btn-default" type="button">リセット</button>
 </div>
 
-<div class="input-group">
+<div class="input-group" id="year">
 	<span class="input-group-btn">
 		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 			年
 			<span class="caret"></span>
 		</button>
 		<ul class="dropdown-menu" role="menu">
-			<li><a href="#">2017</a></li>
-			<li><a href="#">2018</a></li>
-			<li><a href="#">2019</a></li>
+			<li id="2017"><a href="#">2017</a></li>
+			<li id="2018"><a href="#">2018</a></li>
+			<li id="2019"><a href="#">2019</a></li>
 		</ul>
 	</span>
-	<input type="text" class="form-control" placeholder="テキスト入力欄" readonly>
+	<input type="text" class="form-control" placeholder=<%= Date.today.strftime("%Y") %> readonly>
 </div>
-<div class="input-group">
+
+<div class="input-group" id="month">
 	<span class="input-group-btn">
 		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 			月
@@ -27,11 +28,11 @@
 		</button>
 		<ul class="dropdown-menu" role="menu">
 			<% (1..12).each do |month| %>
-				<li><a href="#"><%= month %></a></li>
+				<li id=<%= month %>><a href="#"><%= month %></a></li>
 			<% end %>
 		</ul>
 	</span>
-	<input type="text" class="form-control" placeholder="テキスト入力欄" readonly>
+	<input type="text" class="form-control" placeholder=<%= Date.today.strftime("%m") %> readonly>
 </div>
 
 <div class="table-responsive">
@@ -48,6 +49,7 @@
 	     </tr>
 	   </thead>
 	   <tbody>
+	   	<!--<% @approval_histories.to_json %>-->
 	     <% @approval_histories.each do |approval_history| %>
 	       <tr>
 	         <td><%= approval_history.date %></td>
@@ -61,4 +63,46 @@
 	     <% end %>
 	   </tbody>
   </table>
+  <ul id="result">
+<!-- この中に<li>デデデ大王</li>みたいに検索候補を追加していきます -->
+</ul>
 </div>
+
+<script>
+$(function(){
+	$("#month li").click(function () {
+		month = $(this).attr('id')
+		$("#month input").val(month);
+	});
+	
+	
+	$("#year li").click(function () {
+		year = $(this).attr('id')
+		$("#year input").val(year);
+
+
+	$.ajax({ //ajax通信で以下のことを行います
+      url: '/approval_histories/search', //urlを指定
+      type: 'GET', //メソッドを指定
+      data: {
+        			year: year,
+        			month: month
+    				}, 
+      dataType: 'json' //データ形式を指定
+    })
+    	.done(function(data){ 
+      	$(data).each(function(i, approval_history){ 
+      		$('tbody').append('<tr>')
+        	$('tbody tr').append('<td>' + approval_history.date + '</td>') 
+      		$('tbody tr').append('<td>' + approval_history.previous_in_at + '</td>')
+      		$('tbody tr').append('<td>' + approval_history.previous_out_at + '</td>')
+      		$('tbody tr').append('<td>' + approval_history.in_at + '</td>')
+      		$('tbody tr').append('<td>' + approval_history.out_at + '</td>')
+      		$('tbody tr').append('<td>' + approval_history.applying_attendance_change_target.name + '</td>')
+      		$('tbody tr').append('<td>' + approval_history.created_at + '</td>')
+      		$('tbody tr').append('</tr>')
+      	});
+			})
+	});
+});
+</script>

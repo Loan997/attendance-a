@@ -53,8 +53,9 @@ class UsersController < ApplicationController
   
   #ユーザーのCSVインポート
   def import 
-    import_users(params[:file])
-    redirect_to users_url, notice: "#{registered_count}件登録しました。"
+    registered_count = import_users(params[:file])
+    flash[:success] = "#{registered_count}件登録しました。"
+    redirect_to users_url
   end
 
   private
@@ -63,6 +64,17 @@ class UsersController < ApplicationController
       params.require(:user).permit(:name, :email, :affiliation, :password,
                                    :password_confirmation, :employee_number, :uid, :basic_time, :designated_working_start_time, :designated_working_end_time)
     end
+    
+    def csv_attributes
+      ["name", "email", "affiliation","employee_number", "uid", "basic_time", "designated_working_start_time", "designated_working_end_time",
+                                    "superior", "admin", "password"]
+    end
+    
+    # def rename_key(old:, new:)
+    #   return unless has_key?(old)
+    #   return if has_key?(new)
+    #   self[new] = self.delete(old)
+    # end
     
     # beforeフィルター
 
@@ -79,27 +91,36 @@ class UsersController < ApplicationController
       # current_email_count = ::Email.count
       # emails = []
       # windowsで作られたファイルに対応するので、encoding: "SJIS"を付けている
+      registered_count = 0
       
-      CSV.foreach(params[:file].path, headers: true, encoding: 'UTF-8') do |row|
-        
-        row.str.encode("UTF-16BE", "UTF-8",
-           invalid: :replace,
-           undef: :replace,
-           replace: '.').encode("UTF-8")
-        
-        
-        
-        
-        
+      CSV.foreach(params[:file].path, headers: true, encoding: 'Shift_JIS:UTF-8') do |row|
+        # byebug
+        line = row.to_hash
         user = User.new
-        user.attributes = row.to_hash.slice(csv_attributes)
+        if line.has_key?("basic_work_time")
+          line.store("basic_time", row.to_hash["basic_work_time"])
+          line.delete("basic_work_time")
+        end
+        if line.has_key?("designated_work_start_time")
+          line.store("designated_working_start_time", row.to_hash["designated_work_start_time"])
+          line.delete("designated_work_start_time")
+        end
+        if line.has_key?("designated_work_end_time")
+          line.store("designated_working_end_time", row.to_hash["designated_work_end_time"])
+          line.delete("designated_work_end_time")
+        end
+        # byebug
+        # row.to_hash.rename_key(old: :basic_work_time, new: :basic_time)
+        user.attributes = line
         user.save!
+        registered_count += 1
         # emails << ::Email.new({ name: row["name"], email: row["email"] })
       end
       # importメソッドでバルクインサートできる
       # ::Email.import(emails)
       # 何レコード登録できたかを返す
       # ::Email.count - current_email_count
+      return registered_count
     end
 
 end

@@ -2,6 +2,7 @@ class TimeCard < ApplicationRecord
   validates :in_at, format: { with: /([01][0-9]|2[0-3]):[0-5][0-9]/, allow_blank: true }
   validates :out_at, format: { with: /([01][0-9]|2[0-3]):[0-5][0-9]/, allow_blank: true }
   validates :remarks, length: { maximum: 255 }
+  validates :business_outline, length: {maximum: 255}
   validate :both_time_exists, on: :edit
   validate :time_comparisons, on: :edit
   

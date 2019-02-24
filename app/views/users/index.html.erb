@@ -1,6 +1,16 @@
 <% provide(:title, 'ユーザー一覧') %>
 <h1>ユーザー一覧</h1>
-
+<% if @errors.present? %>
+  <ul>
+  <% @errors.each do |key, line| %>
+    <% line.each do |error| %>
+    <li>
+      <%= key %>行目：<%= error %>
+    </li>
+    <% end %>
+  <% end %>
+  </ul>
+<% end %>
 <%= will_paginate %>
 
 <div>
@@ -11,7 +21,7 @@
       <%= button_tag 'ファイル選択', class: %i(btn-primary csv_input_btn), type: 'button', onclick: "$('#file_input').click();" %>
     </div>
     <div>
-      <button type="submit" class="btn btn-primary">CSVインポート</button>
+      <button type="submit" class="btn btn-primary" id="import" disabled>CSVインポート</button>
     </div>
   <% end %>
 </div>
@@ -24,7 +34,11 @@
   function file_selected(file_field){
     var filename = $(file_field)[0].files[0].name;
     $("#filename").val(filename);
+    $('#import').prop( 'disabled', false );
   }
+  
+  
+  
 </script>
 
 
@@ -64,7 +78,7 @@
                 </div>
                 <div class="field form-group">
                   <%= f.label :employee_number %>
-                  <%= f.text_field :employee_number, class: 'form-control' %>
+                  <%= f.number_field :employee_number, class: 'form-control' %>
                 </div>
                 <div class="field form-group">
                   <%= f.label :uid %>

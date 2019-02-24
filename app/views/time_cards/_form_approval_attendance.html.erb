@@ -20,7 +20,7 @@
                 <tbody>
                   <tr>
                     <td><%= time_card.date.strftime("%m") %>月</td>
-                    <td><%= f.select :is_attendance_application_for_a_month, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, :include_blank => true %></td>
+                    <td><%= f.select :is_attendance_application_for_a_month, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, {}, required: true %></td>
                     <td><%= check_box_tag "[time_cards][#{time_card.id}][change]" %></td>
                     <td><%= link_to "確認", time_card_confirm_path(user_id: time_card.user_id, date: time_card.date, month_flag: 1, confirm: "attendance"), class: "btn btn-primary" %></td>
                   </tr>

@@ -183,6 +183,7 @@ class TimeCardsController < ApplicationController
                         application_targer_for_a_month: params[:test].present? ? User.find(params[:test]) : nil)
       flash[:success] = "勤怠申請が完了しました。"
       redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
+      return
     # 残業申請の場合
     elsif params[:time_card][:type] == "overtime_application"
       @time_card = TimeCard.find(params[:time_card][:id])
@@ -194,7 +195,9 @@ class TimeCardsController < ApplicationController
         # if params[:next_day].nil?
         #   @time_card.end_estimated_time = @time_card.end_estimated_time - 24
         # end
-        @time_card.save!
+        unless @time_card.save!
+          render 'edit'
+        end
         flash[:success] = "残業申請が完了しました。"
         redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
       else

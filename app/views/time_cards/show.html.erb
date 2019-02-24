@@ -136,8 +136,8 @@
 			    <td colspan="5">
 			    <td>
 			    	勤怠申請：<%= get_is_attendance_application_for_a_month %>
-			    	<%= form_with url: apply_update_url, method: "patch" do |form| %>
-  						<%= form.select :test, User.where(superior: true).where.not(id: current_user.id).collect{ |p| [ p.name, p.id ] }, :include_blank => true %>
+			    	<%= form_with url: apply_update_url, method: "patch",local: true do |form| %>
+  						<%= form.select :test, User.where(superior: true).where.not(id: current_user.id).collect{ |p| [ p.name, p.id ] }, {}, required: true %>
   						<%= form.hidden_field :type, value: "for_a_month_application" %>
   						<%= form.hidden_field :year, value: params[:year] %>
   						<%= form.hidden_field :month, value: params[:month] %>

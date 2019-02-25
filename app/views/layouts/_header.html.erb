@@ -1,6 +1,15 @@
 <header class="navbar navbar-fixed-top navbar-inverse">
   <div class="container">
     <%= link_to "勤怠システム", root_path, id: "logo" %>
+    <% if logged_in? %>
+    <% if current_user.admin? %>
+      <a class="text-danger user_type">admin</a>
+    <% elsif current_user.superior? %>
+      <a class="text-primary user_type">supervisor</a>
+    <% else %>
+      <a class="text-success user_type">user</a>
+    <% end %>
+    <% end %>
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#gnavi">
       <span class="sr-only">メニュー</span>

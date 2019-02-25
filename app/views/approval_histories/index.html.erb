@@ -2,7 +2,7 @@
 <h1>勤怠修正ログ（承認済）</h1>
 
 <div>
-	<button class="btn btn-default" type="button">リセット</button>
+	<button class="btn btn-default" type="button" id="reset">リセット</button>
 </div>
 
 <div class="input-group" id="year">
@@ -12,12 +12,14 @@
 			<span class="caret"></span>
 		</button>
 		<ul class="dropdown-menu" role="menu">
-			<li id="2017">2017</li>
-			<li id="2018">2018</li>
-			<li id="2019">2019</li>
+			<li id="2017" class="drop-list"><a href="#">2017</a></li>
+			<li id="2018" class="drop-list"><a href="#">2018</a></li>
+			<li id="2019" class="drop-list"><a href="#">2019</a></li>
 		</ul>
 	</span>
-	<input type="text" class="form-control" placeholder=<%= Date.today.strftime("%Y") %> readonly>
+	<div class="col-xs-2 px-0">
+		<input type="text" class="form-control" placeholder=<%= Date.today.strftime("%Y") %> readonly>
+	</div>
 </div>
 
 <div class="input-group" id="month">
@@ -28,13 +30,15 @@
 		</button>
 		<ul class="dropdown-menu" role="menu">
 			<% (1..12).each do |month| %>
-				<li id=<%= month %>><%= month %></li>
+				<li id=<%= month %>><a href="#"><%= month %></a></li>
 			<% end %>
 		</ul>
 	</span>
+	<div class="col-xs-2 px-0">
 	<input type="text" class="form-control" placeholder=<%= Date.today.strftime("%m") %> readonly>
+	</div>
 </div>
-
+<!--<p></p>-->
 <div class="table-responsive">
   <table class="table table-bordered table-striped">
     <thead>
@@ -110,6 +114,47 @@ $(function(){
 		
 		year = $(this).attr('id')
 		$("#year input").val(year);
+
+
+	$.ajax({ //ajax通信で以下のことを行います
+      url: '/approval_histories/search', //urlを指定
+      type: 'GET', //メソッドを指定
+      data: {
+        			year: year,
+        			month: month
+    				}, 
+      dataType: 'json' //データ形式を指定
+    })
+    	.done(function(data){ 
+    		
+    		$('tbody').find('tr').remove(); 
+    		$('tbody').find('td').remove(); 
+    		
+      	$(data).each(function(i, approval_history){ 
+      		
+      		$('tbody').append(
+      			$("<tr>")
+        			.append("<td>" + approval_history.date + "</td>")
+        			.append("<td>" + moment(approval_history.previous_in_at).format('HH:mm') + "</td>")
+      				.append("<td>" + moment(approval_history.previous_out_at).format('HH:mm') + "</td>")
+      				.append("<td>" + moment(approval_history.in_at).format('HH:mm') + "</td>")
+      				.append("<td>" + moment(approval_history.out_at).format('HH:mm') + "</td>")
+      				.append("<td>" + approval_history.applying_attendance_change_target.name + "</td>")
+      				.append("<td>" + moment(approval_history.created_at).format("YYYY-MM-DD") + "</td>")
+      				.append("</tr>")
+      		)
+      	});
+			});
+	});
+	
+	$("#reset").click(function () {
+		
+		year = moment().format('YYYY')
+		$("#year input").val(year);
+		
+		month = moment().format('MM')
+		$("#month input").val(month);
+		
 
 
 	$.ajax({ //ajax通信で以下のことを行います

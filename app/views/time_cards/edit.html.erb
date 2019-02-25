@@ -30,7 +30,7 @@
 							<td><%= f.time_field :in_at, class: 'form-control', readonly: true %></td>
 							<td><%= f.time_field :out_at, class: 'form-control', readonly: true %></td>
 							<td><%= f.check_box :is_leaving_next_day, {:disabled => true} %></td>
-							<td><% get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
+							<td class="text-right"><% get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
 							<td><%= f.text_field :remarks, class: 'form-control', readonly: true %></td>
 							<td><%= select_tag "[time_cards][#{time_card.id}][applying_attendance_change_target]", options_for_select(User.where(superior: true).where.not(id: current_user.id).collect{ |p| [ p.name, p.id ] }), :include_blank => true ,:disabled => "disabled" %></td>
 						<% elsif is_today?(params[:year], params[:month], i) then %>
@@ -38,14 +38,14 @@
 								<td><%= f.time_field :in_at, class: 'form-control' %></td>
 								<td><%= f.time_field :out_at, class: 'form-control' %></td>
 								<td><%= f.check_box :is_leaving_next_day, {} %></td>
-								<td><%= get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
+								<td class="text-right"><%= get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
 								<td><%= f.text_field :remarks, class: 'form-control' %></td>
 								<td><%= select_tag "[time_cards][#{time_card.id}][applying_attendance_change_target]", options_for_select(User.where(superior: true).where.not(id: current_user.id).collect{ |p| [ p.name, p.id ] }), :include_blank => true %></td>
 							<% else %>
 			    			<td><%= f.time_field :in_at, class: 'form-control', readonly: true %></td>
 								<td><%= f.time_field :out_at, class: 'form-control', readonly: true %></td>
 								<td><%= f.check_box :is_leaving_next_day, {} %></td>
-								<td><%= get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
+								<td class="text-right"><%= get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
 								<td><%= f.text_field :remarks, class: 'form-control', readonly: true %></td>
 								<td><%= select_tag "[time_cards][#{time_card.id}][applying_attendance_change_target]", options_for_select(User.where(superior: true).where.not(id: current_user.id).collect{ |p| [ p.name, p.id ] }), :include_blank => true ,:disabled => "disabled" %></td>
 							<% end %>
@@ -53,7 +53,7 @@
 			 				<td><%= f.time_field :in_at, class: 'form-control' %></td>
 							<td><%= f.time_field :out_at, class: 'form-control' %></td>
 							<td><%= f.check_box :is_leaving_next_day, {} %></td>
-							<td><%= get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
+							<td class="text-right"><%= get_stay_time(params[:user_id]?params[:user_id]:params[:id], params[:year], params[:month], i) %></td>
 							<td><%= f.text_field :remarks, class: 'form-control' %></td>
 							<td><%= select_tag "[time_cards][#{time_card.id}][applying_attendance_change_target]", options_for_select(User.where(superior: true).where.not(id: current_user.id).collect{ |p| [ p.name, p.id ] }), :include_blank => true %></td>
 						<% end %>

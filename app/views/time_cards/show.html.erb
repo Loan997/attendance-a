@@ -34,7 +34,10 @@
   	<%= link_to "勤怠を編集", {:action => "edit", :user_id => params[:user_id], :year => params[:year], :month => params[:month]},class: "btn btn-primary" %>
   	<%= link_to "CSVを出力", time_cards_export_path(format: :csv), class: "btn btn-primary" %>
   	<br>
-  	<%= link_to "勤怠修正ログ（承認済）", approval_histories_index_path ,class: "btn btn-primary" %>
+  	<p></p>
+  	<div>
+  		<%= link_to "勤怠修正ログ（承認済）", approval_histories_index_path ,class: "btn btn-primary" %>
+  	</div>
   	<p></p>
   </div>
   <div class="table-responsive">
@@ -72,7 +75,7 @@
 	    	<% (1..get_days).each do |day| %>
 		    <tr>
 		    	
-		    	<td>
+		    	<td class="text-center">
 		    		
 		    		<%= link_to "残業申請", { :action => "apply", :year => params[:year], :month => params[:month], :day => day }, class: "btn btn-primary", remote: true %>
 		    		</td>
@@ -85,8 +88,8 @@
 			  	
 			  	<td class="text-center"><%= params[:month] %>/<%= day %></td>
 			    <td class="text-center"><%= get_weekday(params[:year], params[:month], day) %></td>
-			    <td><%= get_hour_in_at(params[:user_id], params[:year], params[:month], day) %></td>
-			    <td><%= get_minute_in_at(params[:user_id], params[:year], params[:month], day) %></td>
+			    <td class="text-right"><%= get_hour_in_at(params[:user_id], params[:year], params[:month], day) %></td>
+			    <td class="text-right"><%= get_minute_in_at(params[:user_id], params[:year], params[:month], day) %></td>
 			    <td>
 			    <% if is_today?(params[:year], params[:month], day) && !attendance?(params[:user_id], params[:year], params[:month], day) %>
 			    	<%= form_with url: time_cards_path do |form| %>
@@ -97,8 +100,8 @@
             <% end %>
 				<% end %>
 			    </td>
-			    <td><%= get_hour_out_at(params[:user_id], params[:year], params[:month], day) %></td>
-			    <td><%= get_minute_out_at(params[:user_id], params[:year], params[:month], day) %></td>
+			    <td class="text-right"><%= get_hour_out_at(params[:user_id], params[:year], params[:month], day) %></td>
+			    <td class="text-right"><%= get_minute_out_at(params[:user_id], params[:year], params[:month], day) %></td>
 			    <td>
 			    	<% if is_today?(params[:year], params[:month], day) && 
 			    			attendance?(params[:user_id], params[:year], params[:month], day) &&
@@ -110,15 +113,15 @@
               			<% end %>
             		<% end %>
           		</td>
-			    <td><%= get_stay_time(params[:user_id], params[:year], params[:month], day) %></td>
-			    <td>
+			    <td class="text-right"><%= get_stay_time(params[:user_id], params[:year], params[:month], day) %></td>
+			    <td class="text-left">
 			    	<%= get_remarks(day) %>
 			    </td>
-			    <td><%= get_hour_end_estimated_time(day) %></td>
-			    <td><%= get_minute_end_estimated_time(day) %></td>
-			    <td><%= off_hours_time(current_user.id, params[:year], params[:month], day) %></td>
-			    <td><%= get_business_outline(day) %></td>
-			    <td>
+			    <td class="text-right"><%= get_hour_end_estimated_time(day) %></td>
+			    <td class="text-right"><%= get_minute_end_estimated_time(day) %></td>
+			    <td class="text-right"><%= off_hours_time(current_user.id, params[:year], params[:month], day) %></td>
+			    <td class="text-left"><%= get_business_outline(day) %></td>
+			    <td class="text-left">
 			    	<% if get_overtime_application_target(day) %>
 			    		<div><%= get_overtime_application_target(day) %></div>
 			    	<% end %>
@@ -132,7 +135,7 @@
 		    	<td></td>
 		    	<td colspan="2"></td>
 		    	<td colspan="6"></td>
-			    <td><%= @sum_stay_time %></td>
+			    <td class="text-right"><%= @sum_stay_time %></td>
 			    <td colspan="5">
 			    <td>
 			    	勤怠申請：<%= get_is_attendance_application_for_a_month %>

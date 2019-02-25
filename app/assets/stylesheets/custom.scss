@@ -77,6 +77,16 @@ p {
   }
 }
 
+.user_type {
+  float: left;
+  margin-right: 10px;
+  font-size: 1.7em;
+  padding-top: 9px;
+  &:hover {
+    text-decoration: none;
+  }
+}
+
 /* footer */
 
 footer {
@@ -292,4 +302,9 @@ span.picture {
 
 .panel-title a {
   color: white;
+}
+
+
+.px-0 {
+  padding: 0;
 }

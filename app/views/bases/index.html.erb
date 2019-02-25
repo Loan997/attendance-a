@@ -9,21 +9,21 @@
 	      <tr>
           <th></th>
           <th></th>
-          <th>拠点番号</th>
-          <th>拠点名</th>
-          <th>勤怠種類</th>
+          <th class="text-center">拠点番号</th>
+          <th class="text-center">拠点名</th>
+          <th class="text-center">勤怠種類</th>
 	       </tr>
     </thead>
     <tbody>
       <% @bases.each do |base| %>
       <tr>
-        <td>
+        <td class="text-center">
           <%= link_to "編集", edit_basis_path(base), class: "btn btn-primary", remote: true %>
         </td>
-        <td><%= link_to "削除", base, method: :delete, data: { confirm: "本当に削除しますか。" }, class: "btn btn-primary" %></td>
-        <td><%= base.base_number %></td>
-        <td><%= base.base_name %></td>
-        <td><%= base.attendance_type %></td>
+        <td class="text-center"><%= link_to "削除", base, method: :delete, data: { confirm: "本当に削除しますか。" }, class: "btn btn-primary" %></td>
+        <td class="text-right"><%= base.base_number %></td>
+        <td class="text-left"><%= base.base_name %></td>
+        <td class="text-left"><%= base.attendance_type %></td>
       </tr>
       <% end %>
     </tbody>

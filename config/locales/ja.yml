@@ -8,6 +8,11 @@ ja:
         affiliation: "所属"
         password: "パスワード"
         password_confirmation: "パスワード(確認)"
+        designated_working_start_time: "指定勤務開始時間"
+        designated_working_end_time: "指定勤務終了時間"
+        employee_number: "社員番号"
+        uid: "カード番号"
+        basic_time: "基本時間"
       time_basic_information:
         designated_working_times: "指定勤務時間"
         basic_time: "基本時間"
@@ -16,6 +21,12 @@ ja:
         out_at: "退社時間"
         date: "日付"
         remarks: "備考"
+        business_outline: "業務内容"
+        end_estimated_time: "終了予定時間"
+      base:
+        base_number: "拠点番号"
+        base_name: "拠点名"
+        attendance_type: "勤怠種類"
     errors:
       messages:
         blank: "を入力してください。"

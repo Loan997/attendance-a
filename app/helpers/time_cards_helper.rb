@@ -206,12 +206,12 @@ module TimeCardsHelper
   #勤怠申請の状態を取得
   def get_is_attendance_application_for_a_month
     # byebug
-    if TimeCard.find_by(user_id:current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-1", '%Y-%m-%d')).is_attendance_application_for_a_month.nil? || 
-      TimeCard.find_by(user_id:current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-1", '%Y-%m-%d')).application_targer_for_a_month.nil?
+    if TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-1", '%Y-%m-%d')).is_attendance_application_for_a_month.nil? || 
+      TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-1", '%Y-%m-%d')).application_targer_for_a_month.nil?
       return "なし"
     else
-      name = TimeCard.find_by(user_id:current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-1", '%Y-%m-%d')).application_targer_for_a_month.name
-      status = TimeCard.find_by(user_id:current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-1", '%Y-%m-%d')).is_attendance_application_for_a_month.status
+      name = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-1", '%Y-%m-%d')).application_targer_for_a_month.name
+      status = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-1", '%Y-%m-%d')).is_attendance_application_for_a_month.status
       return "#{name} #{status}"
     end
   end

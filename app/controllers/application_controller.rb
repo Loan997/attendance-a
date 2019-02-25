@@ -15,7 +15,10 @@ class ApplicationController < ActionController::Base
     
     # 管理者かどうかを確認
     def admin_user
-      redirect_to(root_url) unless current_user.admin?
+      unless current_user.admin?
+        flash[:danger] = "管理者以外はアクセスできません。"
+        redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
+      end
     end
     
     # 正しいユーザーか、もしくは管理者かどうかを確認

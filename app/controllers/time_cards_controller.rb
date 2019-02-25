@@ -3,7 +3,7 @@ class TimeCardsController < ApplicationController
   require 'date'
   # require 'mathn'
   
-  before_action :logged_in_user, only: [:show, :edit, :update]
+  before_action :logged_in_user, only: [:show, :edit, :update, :new]
   before_action :admin_user_or_correct_user, only: [:show, :edit]
   # before_action :logged_in_user, only: [:edit, :update]
 

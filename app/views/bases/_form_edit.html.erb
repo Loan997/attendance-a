@@ -9,7 +9,7 @@
     <div class="modal-body">
     <div class="row">
       <div class="col-md-6 col-md-offset-3">
-        <%= form_with model: @base do |form| %>
+        <%= form_with model: @base, local: true do |form| %>
           <%= form.label :base_number %>
           <%= form.number_field :base_number %>
 

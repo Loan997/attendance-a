@@ -179,8 +179,9 @@ class TimeCardsController < ApplicationController
     if params[:type] == "for_a_month_application"
       @time_card = TimeCard.find_by(user_id: current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-1", '%Y-%m-%d'))
       # byebug
-      @time_card.update!(is_attendance_application_for_a_month: ApplyingState.find_by(status: "申請中"),
+      @time_card.update(is_attendance_application_for_a_month: ApplyingState.find_by(status: "申請中"),
                         application_targer_for_a_month: params[:test].present? ? User.find(params[:test]) : nil)
+                        
       flash[:success] = "勤怠申請が完了しました。"
       redirect_to controller: 'time_cards', action: 'show', user_id: current_user.id, year: Date.current.year, month: Date.current.month
       return
@@ -236,7 +237,6 @@ class TimeCardsController < ApplicationController
     @time_cards = TimeCard.where(id: time_cards_params.keys).order('date')
     count_change = 0
     @time_cards.each do |time_card|
-      # byebug
       if params[:time_cards]["#{time_card.id}"][:change]
         time_card.is_overtime_applying = ApplyingState.find(params[:time_cards]["#{time_card.id}"][:is_overtime_applying])
         time_card.save!

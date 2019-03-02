@@ -92,7 +92,7 @@
 			    <td class="text-right"><%= get_minute_in_at(params[:user_id], params[:year], params[:month], day) %></td>
 			    <td>
 			    <% if is_today?(params[:year], params[:month], day) && !attendance?(params[:user_id], params[:year], params[:month], day) %>
-			    	<%= form_with url: time_cards_path do |form| %>
+			    	<%= form_with url: time_cards_path, local: true do |form| %>
 			        <%= hidden_field_tag 'user_id', params[:user_id] %>
 			        <%= hidden_field_tag 'button_type', 'attendance' %>
 			        <%= hidden_field_tag 'date_type', parse_date_type(params[:year], params[:month], day) %>
@@ -106,7 +106,7 @@
 			    	<% if is_today?(params[:year], params[:month], day) && 
 			    			attendance?(params[:user_id], params[:year], params[:month], day) &&
 			    					!leaving?(params[:user_id], params[:year], params[:month], day) %>
-			        	<%= form_with url: time_cards_path do |form| %>
+			        	<%= form_with url: time_cards_path, local: true do |form| %>
 			          	<%= hidden_field_tag 'user_id', params[:user_id] %>
 			          	<%= hidden_field_tag 'date_type', parse_date_type(params[:year], params[:month], day) %>
                 		<%= form.submit "退社", class: "btn btn-primary" %>

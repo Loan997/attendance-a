@@ -7,7 +7,7 @@
     </div>
     <div class="modal-body">
     <% user_id_temp = '' %>
-    <%= form_tag("/time_cards/approval_attendance_change/update", method: "patch"  ) do %>
+    <%= form_tag("/time_cards/approval_overtime_working/update", method: "patch"  ) do %>
       <% @time_cards.each do |time_card| %>
         <% if time_card.user_id != user_id_temp %>
           <h3 class="text-center">【<%= time_card.user.name %>からの残業申請】</h3>
@@ -36,7 +36,7 @@
                     <td><%= time_card.user.designated_working_end_time ? time_card.user.designated_working_end_time.strftime('%H:%M') : '' %></td>
                     <td class="text-right"><%= off_hours_time(time_card.user_id, time_card.date.strftime("%Y"), time_card.date.strftime("%m"), time_card.date.strftime("%d")) %></td>
                     <td class="text-left"><%= time_card.business_outline %></td>
-                    <td><%= f.select :is_attendance_application_for_a_month, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, {}, required: true %></td>
+                    <td><%= f.select :is_overtime_applying, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, {}, required: true %></td>
                     <td><%= check_box_tag "[time_cards][#{time_card.id}][change]" %></td>
                     <td class="text-center"><%= link_to "確認", time_card_confirm_path(user_id: time_card.user_id, month: time_card.date.strftime("%m"), month_flag: 0, confirm: "overtime"), class: "btn btn-primary" %></td>
                   </tr>

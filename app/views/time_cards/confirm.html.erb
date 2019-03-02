@@ -105,7 +105,7 @@
 			    </td>
 			    <td><%= get_hour_end_estimated_time(day) %></td>
 			    <td><%= get_minute_end_estimated_time(day) %></td>
-			    <td><%= off_hours_time(current_user.id, params[:year], params[:month], day) %></td>
+			    <td><%= off_hours_time(params[:user_id], params[:year], params[:month], day) %></td>
 			    <td><%= get_business_outline(day) %></td>
 			    <td>
 			    	<% if get_overtime_application_target(day) %>

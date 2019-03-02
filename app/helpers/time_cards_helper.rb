@@ -100,7 +100,7 @@ module TimeCardsHelper
   
   #終了予定時間の時を取得
   def get_hour_end_estimated_time(day)
-    time_card = TimeCard.find_by(user_id:current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+    time_card = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
     if time_card.end_estimated_time.nil?
       return ''
     else
@@ -110,7 +110,7 @@ module TimeCardsHelper
   
   #終了予定時間の分を取得
   def get_minute_end_estimated_time(day)
-    time_card = TimeCard.find_by(user_id:current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+    time_card = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
     # byebug
     if time_card.end_estimated_time.nil?
       return ''
@@ -186,18 +186,11 @@ module TimeCardsHelper
     user = User.find(user_id)
     if user.designated_working_end_time && !get_end_estimated_time(user_id, year, month, day).blank?
       time_card = TimeCard.find_by(user_id: user_id, date:Date.strptime("#{year}-#{month}-#{day}", '%Y-%m-%d'))
-      # byebug
-      if time_card.next_day.blank?
+      if time_card.next_day.blank? && get_end_estimated_time(user_id, year, month, day).strftime('%H:%M') < user.designated_working_end_time.strftime('%H:%M')
         return ((get_end_estimated_time(user_id, year, month, day) - user.designated_working_end_time) / 60 / 60).floor(2) - 24
-      # byebug
       else
          return ((get_end_estimated_time(user_id, year, month, day) - user.designated_working_end_time) / 60 / 60).floor(2)
       end
-      # if user.designated_working_end_time > get_end_estimated_time(day) then
-      #   return ((user.designated_working_end_time - get_end_estimated_time(day)) / 60 / 60).floor(2) + 24
-      # else
-      #   return ((user.designated_working_end_time - get_end_estimated_time(day)) / 60 / 60).floor(2)
-      # end
     else
       return ''
     end
@@ -221,6 +214,7 @@ module TimeCardsHelper
   
   #備考を取得
   def get_remarks(day)
+    # byebug
     time_card = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
     if time_card && time_card.remarks  then
       return time_card.remarks
@@ -231,13 +225,14 @@ module TimeCardsHelper
   
   #業務内容を取得
   def get_business_outline(day)
-    time_card = TimeCard.find_by(user_id:current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+    # byebug
+    time_card = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
     return time_card.business_outline
   end
   
   #残業申請先を取得
   def get_overtime_application_target(day)
-    time_card = TimeCard.find_by(user_id:current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+    time_card = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
     # byebug
     if time_card.overtime_application_target && time_card.is_overtime_applying
       return "残業:#{time_card.overtime_application_target.name} #{time_card.is_overtime_applying.status}"
@@ -248,7 +243,7 @@ module TimeCardsHelper
   
   #勤怠変更申請先を取得
   def get_applying_attendance_change_target(day)
-    time_card = TimeCard.find_by(user_id:current_user.id, date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
+    time_card = TimeCard.find_by(user_id:params[:user_id], date:Date.strptime("#{params[:year]}-#{params[:month]}-#{day}", '%Y-%m-%d'))
     if time_card.applying_attendance_change_target && time_card.is_applying_attendance_change
       return "勤怠変更:#{time_card.applying_attendance_change_target.name} #{time_card.is_applying_attendance_change.status}"
     else

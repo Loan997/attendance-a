@@ -8,6 +8,7 @@
     <div class="modal-body">
     <% user_id_temp = '' %>
     <%= form_tag("/time_cards/approval_attendance_change/update", method: "patch"  ) do %>
+      <% count = 1 %>
       <% @time_cards.each do |time_card| %>
         <% if time_card.user_id != user_id_temp %>
           <h3 class="text-center">【<%= time_card.user.name %>からの勤怠変更申請】</h3>
@@ -57,8 +58,8 @@
                     <td class="text-center"><%= time_card.out_at ? time_card.out_at.strftime('%H') : '' %></td>
                     <td class="text-center"><%= time_card.out_at ? time_card.out_at.strftime('%M') : '' %></td>
                     <td class="text-left"><%= time_card.remarks %></td>
-                    <td><%= f.select :is_applying_attendance_change, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, {}, required: true %></td>
-                    <td><%= check_box_tag "[time_cards][#{time_card.id}][change]" %></td>
+                    <td><%= f.select :is_applying_attendance_change, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, {:include_blank => true}, {class: "select_#{count}"} %></td>
+                    <td><%= check_box_tag "[time_cards][#{time_card.id}][change]", count %></td>
                     <td class="text-center"><%= link_to "確認", time_card_confirm_path(user_id: time_card.user_id, month: time_card.date.strftime("%m"), month_flag: 0, confirm: "change"), class: "btn btn-primary" %></td>
                   </tr>
                 </tbody>
@@ -67,9 +68,24 @@
           </div>
       
         <% user_id_temp = time_card.user_id %>
+        <% count += 1 %>
       <% end %>
-      <%= submit_tag('変更を送信する', class: "btn btn-primary") %>
+      <%= submit_tag('変更を送信する', class: "btn btn-primary", id: "submit") %>
     <% end %>
     </div>
   </div>
 </div>
+<script>
+  $(function() {
+    $('#submit').click(function(){
+      $("select").each(function() {
+        $(this).prop('required', false);
+      });
+      
+      $("input:checked").each(function() {
+        var class_name = $(this).val();
+        $('.select_'+class_name).prop('required', true);
+      });
+    });
+  });
+</script>

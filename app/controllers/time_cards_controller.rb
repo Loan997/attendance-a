@@ -238,7 +238,8 @@ class TimeCardsController < ApplicationController
     count_change = 0
     @time_cards.each do |time_card|
       if params[:time_cards]["#{time_card.id}"][:change]
-        time_card.is_overtime_applying = ApplyingState.find(params[:time_cards]["#{time_card.id}"][:is_overtime_applying])
+        
+        time_card.is_overtime_applying = ApplyingState.find_by(id: params[:time_cards]["#{time_card.id}"][:is_overtime_applying])
         time_card.save!
         count_change += 1
       end

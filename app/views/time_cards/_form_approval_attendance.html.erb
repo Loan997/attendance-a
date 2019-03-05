@@ -8,6 +8,7 @@
     <div class="modal-body">
       <% user_id_temp = '' %>
       <%= form_tag("/time_cards/approval_attendance/update", method: "patch") do %>
+        <% count = 1 %>
         <% @time_cards.each do |time_card| %>
           <% if time_card.user_id != user_id_temp %>
             <h3 class="modal-title text-center">【<%= time_card.user.name %>からの１カ月分の勤怠申請】</h3>
@@ -26,8 +27,8 @@
                 <tbody>
                   <tr>
                     <td class="text-right"><%= time_card.date.strftime("%m") %>月</td>
-                    <td><%= f.select :is_attendance_application_for_a_month, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, {}, required: true %></td>
-                    <td class="text-center"><%= check_box_tag "[time_cards][#{time_card.id}][change]" %></td>
+                    <td><%= f.select :is_attendance_application_for_a_month, ApplyingState.all.collect{ |p| [ p.status, p.id ] }, {:include_blank => true}, {class: "select_#{count}"} %></td>
+                    <td class="text-center"><%= check_box_tag "[time_cards][#{time_card.id}][change]", count %></td>
                     <td class="text-center"><%= link_to "確認", time_card_confirm_path(user_id: time_card.user_id, month: time_card.date.strftime("%m"), month_flag: 1, confirm: "attendance"), class: "btn btn-primary" %></td>
                   </tr>
                 </tbody>
@@ -35,9 +36,24 @@
             <% end %>
           </div>
           <% user_id_temp = time_card.user_id %>
+          <% count += 1 %>
         <% end %>
-        <%= submit_tag('変更を送信する', class: "btn btn-primary") %>
+        <%= submit_tag('変更を送信する', class: "btn btn-primary", id: "submit") %>
       <% end %>
     </div>
   </div>
 </div>
+<script>
+  $(function() {
+    $('#submit').click(function(){
+      $("select").each(function() {
+        $(this).prop('required', false);
+      });
+      
+      $("input:checked").each(function() {
+        var class_name = $(this).val();
+        $('.select_'+class_name).prop('required', true);
+      });
+    });
+  });
+</script>

@@ -293,27 +293,27 @@ module TimeCardsHelper
   def is_attendance_application_for_a_month?
     
     # byebug
-    return !TimeCard.where(is_attendance_application_for_a_month: 1)
+    return TimeCard.where(is_attendance_application_for_a_month: 1)
                     .or(TimeCard.where(is_attendance_application_for_a_month: 2))
                     .where(application_targer_for_a_month: @user.id)
-                    .empty?
+                    .count
   end
   
   # 勤怠変更の申請がきているか
   def is_applying_attendance_change?
     # byebug
-    return !TimeCard.where(is_applying_attendance_change: 1)
+    return TimeCard.where(is_applying_attendance_change: 1)
                     .or(TimeCard.where(is_applying_attendance_change: 2))
                     .where(applying_attendance_change_target: @user.id)
-                    .empty?
+                    .count
   end
   
   #残業申請の承認申請がきているか
   def is_overtime_applying?
-   return !TimeCard.where(is_overtime_applying: 1)
+   return TimeCard.where(is_overtime_applying: 1)
                     .or(TimeCard.where(is_overtime_applying: 2))
                     .where(overtime_application_target: @user.id)
-                    .empty?
+                    .count
   end
   
 end

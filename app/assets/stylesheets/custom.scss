@@ -308,3 +308,25 @@ span.picture {
 .px-0 {
   padding: 0;
 }
+
+.box {
+  margin: 2em 0;
+  font-weight: bold;
+  border: solid 3px red;
+}
+
+.red {
+  color: red;
+  &:hover {
+    color: maroon;
+  }
+}
+
+.red2 {
+  color: red;
+}
+
+.margin {
+  margin: 7px 0px;
+  
+}

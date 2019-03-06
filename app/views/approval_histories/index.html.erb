@@ -135,7 +135,7 @@ $(function(){
       		$('tbody').append(
       			$("<tr>")
         			.append("<td>" + approval_history.date + "</td>")
-        			.append("<td>" + moment(approval_history.previous_in_at).format('HH:mm') + "</td>")
+        			.append("<td>" + approval_history.previous_in_at ? moment(approval_history.previous_in_at).format('HH:mm') : '' + "</td>")
       				.append("<td>" + moment(approval_history.previous_out_at).format('HH:mm') + "</td>")
       				.append("<td>" + moment(approval_history.in_at).format('HH:mm') + "</td>")
       				.append("<td>" + moment(approval_history.out_at).format('HH:mm') + "</td>")

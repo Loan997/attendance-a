@@ -45,7 +45,9 @@
 </div>
 <script>
   $(function() {
+    
     $('#submit').click(function(){
+      
       $("select").each(function() {
         $(this).prop('required', false);
       });
@@ -54,6 +56,8 @@
         var class_name = $(this).val();
         $('.select_'+class_name).prop('required', true);
       });
+      
     });
+    
   });
 </script>

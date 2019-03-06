@@ -57,12 +57,12 @@
 	     <% @approval_histories.each do |approval_history| %>
 	       <tr>
 	         <td><%= approval_history.date %></td>
-	         <td><%= approval_history.previous_in_at ? approval_history.previous_in_at.strftime('%H:%M') : '' %></td>
-	         <td><%= approval_history.previous_out_at ? approval_history.previous_out_at.strftime('%H:%M') : '' %></td>
-	         <td><%= approval_history.in_at ? approval_history.in_at.strftime('%H:%M') : '' %></td>
-	         <td><%= approval_history.out_at ? approval_history.out_at.strftime('%H:%M') : '' %></td>
+	         <td><%= approval_history.previous_in_at.present? ? approval_history.previous_in_at.strftime('%H:%M') : '' %></td>
+	         <td><%= approval_history.previous_out_at.present? ? approval_history.previous_out_at.strftime('%H:%M') : '' %></td>
+	         <td><%= approval_history.in_at.present? ? approval_history.in_at.strftime('%H:%M') : '' %></td>
+	         <td><%= approval_history.out_at.present? ? approval_history.out_at.strftime('%H:%M') : '' %></td>
 	         <td><%= approval_history.applying_attendance_change_target.name %></td>
-	         <td><%= approval_history.created_at ? approval_history.created_at.strftime('%Y-%m-%d') : '' %></td>
+	         <td><%= approval_history.created_at.present? ? approval_history.created_at.strftime('%Y-%m-%d') : '' %></td>
 	       </tr>
 	     <% end %>
 	   </tbody>

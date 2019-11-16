@@ -1,6 +1,6 @@
-name: CI
+name: Pham loan
 
-on: [push]
+on:
 
 jobs:
   build:
